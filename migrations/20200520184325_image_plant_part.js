@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 
 exports.up = function (knex) {
-  return knex.schema.createTable('image_plant_part', (table) => {
+  return knex.schema.createTable('plant_part_image', (table) => {
     table
       .primary(['plant_part_id', 'image_id']);
     table
@@ -20,5 +20,5 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
-  return knex.schema.dropTableIfExists('image_plant_part');
+  return knex.schema.dropTableIfExists('plant_part_image');
 };

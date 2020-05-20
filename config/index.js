@@ -1,6 +1,7 @@
 require('dotenv').config({ path: './.env' });
 
 const config = {
+  nodeEnv: process.env.NODE_ENV,
   databaseUrl: process.env.DATABASE_URL,
   databasePort: process.env.DATABASE_PORT,
   databaseUsername: process.env.DATABASE_USERNAME,
