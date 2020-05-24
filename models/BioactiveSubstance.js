@@ -19,6 +19,14 @@ class BioactiveSubstance extends BaseModel {
           ],
         },
       },
+      measureUnit: {
+        relation: BaseModel.BelongsToOneRelation,
+        modelClass: 'MeasureUnit',
+        join: {
+          from: 'bioactive_substance.measure_unit_id',
+          to: 'measure_unit.id',
+        },
+      },
     };
   }
 }

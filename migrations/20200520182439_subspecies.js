@@ -5,7 +5,7 @@ exports.up = function (knex) {
     table.increments().primary();
     table.string('name').notNullable();
     table
-      .integer('plantspecies_id')
+      .integer('plant_species_id')
       .unsigned()
       .references('id')
       .inTable('plant_species')

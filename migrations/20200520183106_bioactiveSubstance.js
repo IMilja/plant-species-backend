@@ -7,12 +7,12 @@ exports.up = function (knex) {
     table.string('name');
     table.float('content');
     table
-      .integer('unit_of_measure_id')
+      .integer('measure_unit_id')
       .unsigned()
       .notNullable()
       .references('id')
-      .inTable('unit_of_measure')
-      .index('FK_unit_of_measure');
+      .inTable('measure_unit')
+      .index('FK_measure_unit');
     table
       .integer('plant_part_id')
       .unsigned()

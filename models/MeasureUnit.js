@@ -1,8 +1,8 @@
 const BaseModel = require('./BaseModel');
 
-class UnitOfMeasure extends BaseModel {
+class MeasureUnit extends BaseModel {
   static get tableName() {
-    return 'unit_of_measure';
+    return 'measure_unit';
   }
 
   static get relationMappings() {
@@ -11,12 +11,12 @@ class UnitOfMeasure extends BaseModel {
         relation: BaseModel.HasManyRelation,
         modelClass: 'BioactiveSubstances',
         join: {
-          from: 'unit_of_measure.id',
-          to: 'bioactive_substance.unit_of_measure_id',
+          from: 'measure_unit.id',
+          to: 'bioactive_substance.measure_unit_id',
         },
       },
     };
   }
 }
 
-module.exports = UnitOfMeasure;
+module.exports = MeasureUnit;

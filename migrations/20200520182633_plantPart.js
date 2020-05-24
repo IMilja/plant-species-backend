@@ -4,20 +4,20 @@ exports.up = function (knex) {
   return knex.schema.createTable('plant_part', (table) => {
     table.increments().primary();
     table
-      .integer('plantspecies_id')
+      .integer('plant_species_id')
       .unsigned()
       .notNullable()
       .references('id')
       .inTable('plant_species')
       .index();
     table
-      .integer('usefulpart_id')
+      .integer('useful_part_id')
       .unsigned()
       .notNullable()
       .references('id')
       .inTable('useful_part')
       .index();
-    table.unique(['plantspecies_id', 'usefulpart_id']);
+    table.unique(['plant_species_id', 'useful_part_id']);
     table.text('description');
   });
 };

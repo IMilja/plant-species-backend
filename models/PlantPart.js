@@ -11,7 +11,7 @@ class PlantspeciesUsefulpart extends BaseModel {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: 'UsefulPart',
         join: {
-          from: 'plant_part.usefulpart_id',
+          from: 'plant_part.useful_part_id',
           to: 'useful_part.id',
         },
       },
@@ -19,7 +19,7 @@ class PlantspeciesUsefulpart extends BaseModel {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: 'PlantSpecies',
         join: {
-          from: 'plant_part.plantspecies_id',
+          from: 'plant_part.plant_species_id',
           to: 'plant_species.id',
         },
       },

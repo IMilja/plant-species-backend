@@ -12,7 +12,7 @@ class PlantSpecies extends BaseModel {
         modelClass: 'Subspecies',
         join: {
           from: 'plant_species.id',
-          to: 'subspecies.plantspecies_id',
+          to: 'subspecies.plant_species_id',
         },
       },
       systematist: {
@@ -37,8 +37,8 @@ class PlantSpecies extends BaseModel {
         join: {
           from: 'plant_species.id',
           through: {
-            from: 'plant_part.plantspecies_id',
-            to: 'plant_part.usefulpart_id',
+            from: 'plant_part.plant_species_id',
+            to: 'plant_part.useful_part_id',
             modelClass: 'PlantPart',
             extra: ['description'],
           },
@@ -50,7 +50,7 @@ class PlantSpecies extends BaseModel {
         modelClass: 'PlantPart',
         join: {
           from: 'plant_species.id',
-          to: 'plant_part.plantspecies_id',
+          to: 'plant_part.plant_species_id',
         },
       },
       images: {
@@ -59,7 +59,7 @@ class PlantSpecies extends BaseModel {
         join: {
           from: 'plant_species.id',
           through: {
-            from: 'plant_species_image.plantspecies_id',
+            from: 'plant_species_image.plant_species_id',
             to: 'plant_species_image.image_id',
           },
           to: 'image.id',

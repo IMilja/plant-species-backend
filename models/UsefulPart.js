@@ -13,8 +13,8 @@ class UsefulPart extends BaseModel {
         join: {
           from: 'useful_part.id',
           through: {
-            from: 'plant_part.usefulpart_id',
-            to: 'plant_part.plantspecies_id',
+            from: 'plant_part.useful_part_id',
+            to: 'plant_part.plant_species_id',
             modelClass: 'PlantPart',
           },
           to: 'plant_species.id',

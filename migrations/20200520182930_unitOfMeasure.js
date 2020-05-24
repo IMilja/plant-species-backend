@@ -1,12 +1,12 @@
 /* eslint-disable func-names */
 
 exports.up = function (knex) {
-  return knex.schema.createTable('unit_of_measure', (table) => {
+  return knex.schema.createTable('measure_unit', (table) => {
     table.increments().primary();
     table.string('name').notNullable().index();
   });
 };
 
 exports.down = function (knex) {
-  return knex.schema.dropTableIfExists('unit_of_measure');
+  return knex.schema.dropTableIfExists('measure_unit');
 };

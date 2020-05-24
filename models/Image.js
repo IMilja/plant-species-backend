@@ -26,7 +26,7 @@ class Image extends BaseModel {
           from: 'image.id',
           through: {
             from: 'plant_species_image.image_id',
-            to: 'plant_species_image.plantspecies_id',
+            to: 'plant_species_image.plant_species_id',
           },
           to: 'plant_part.id',
         },

@@ -3,9 +3,9 @@
 exports.up = function (knex) {
   return knex.schema.createTable('plant_species_image', (table) => {
     table
-      .primary(['plantspecies_id', 'image_id']);
+      .primary(['plant_species_id', 'image_id']);
     table
-      .integer('plantspecies_id')
+      .integer('plant_species_id')
       .unsigned()
       .notNullable()
       .references('id')

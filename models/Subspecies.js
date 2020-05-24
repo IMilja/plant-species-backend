@@ -11,7 +11,7 @@ class Subspecies extends BaseModel {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: 'PlantSpecies',
         join: {
-          from: 'subspecies.plantspecies_id',
+          from: 'subspecies.plant_species_id',
           to: 'plant_species.id',
         },
       },
