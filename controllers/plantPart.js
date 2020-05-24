@@ -58,4 +58,32 @@ router.delete('/:id([0-9]+)', async (req, res) => {
   }
 });
 
+router.get('/:id([0-9]+)/images', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = await PlantPart
+      .relatedQuery('images')
+      .for(id);
+
+    return apiResponses.successResponseWithData(res, data);
+  } catch (error) {
+    return apiResponses.ErrorResponse(res, error.message);
+  }
+});
+
+router.get('/:id([0-9]+)/bioactive-substances', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = await PlantPart
+      .relatedQuery('bioactiveSubstances')
+      .for(id);
+
+    return apiResponses.successResponseWithData(res, data);
+  } catch (error) {
+    return apiResponses.ErrorResponse(res, error.message);
+  }
+});
+
 module.exports = router;

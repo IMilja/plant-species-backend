@@ -27,6 +27,7 @@ router.get('/:id([0-9]+)', async (req, res) => {
       genus: {
         botanicalFamily: true,
       },
+      systematist: true,
     });
 
     if (!data) {
@@ -117,6 +118,48 @@ router.delete('/:id([0-9]+)', async (req, res) => {
     }
 
     return apiResponses.successResponseDeleted(res);
+  } catch (error) {
+    return apiResponses.ErrorResponse(res, error.message);
+  }
+});
+
+router.get('/:id([0-9]+)/images', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = await PlantSpecies
+      .relatedQuery('images')
+      .for(id);
+
+    return apiResponses.successResponseWithData(res, data);
+  } catch (error) {
+    return apiResponses.ErrorResponse(res, error.message);
+  }
+});
+
+router.get('/:id([0-9]+)/subspecies', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = await PlantSpecies
+      .relatedQuery('subspecies')
+      .for(id);
+
+    return apiResponses.successResponseWithData(res, data);
+  } catch (error) {
+    return apiResponses.ErrorResponse(res, error.message);
+  }
+});
+
+router.get('/:id([0-9]+)/useful-parts', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = await PlantSpecies
+      .relatedQuery('usefulParts')
+      .for(id);
+
+    return apiResponses.successResponseWithData(res, data);
   } catch (error) {
     return apiResponses.ErrorResponse(res, error.message);
   }
