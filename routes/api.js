@@ -8,6 +8,7 @@ const usefulPartController = require('../controllers/usefulPart');
 const plantPartController = require('../controllers/plantPart');
 const measureUnitController = require('../controllers/measureUnit');
 const bioactiveSubstanceController = require('../controllers/bioactiveSubstance');
+const imageController = require('../controllers/image');
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/useful-parts', usefulPartController);
 router.use('/plant-parts', plantPartController);
 router.use('/measure-units', measureUnitController);
 router.use('/bioactive-substances', bioactiveSubstanceController);
+router.use('/images', imageController);
 
 module.exports = router;

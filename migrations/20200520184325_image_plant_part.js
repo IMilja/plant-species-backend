@@ -15,7 +15,8 @@ exports.up = function (knex) {
       .unsigned()
       .notNullable()
       .references('id')
-      .inTable('image');
+      .inTable('image')
+      .onDelete('CASCADE');
   });
 };
 

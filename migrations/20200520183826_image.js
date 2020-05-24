@@ -7,7 +7,7 @@ exports.up = function (knex) {
     table.text('description');
     table.string('source').notNullable();
     table.timestamp('upload_date').notNullable().defaultTo(knex.fn.now());
-    table.string('image_source').notNullable();
+    table.string('image_url').notNullable();
     table.string('file_name');
     table.boolean('custom_upload').defaultTo(false);
   });

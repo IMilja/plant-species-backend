@@ -36,10 +36,15 @@ const usefulPartValidationRules = () => [
   body('latinName').notEmpty().withMessage('Polje latinski naziv je obavezno'),
 ];
 
-const bioactiveSubstanceRules = () => [
+const bioactiveSubstanceValidationRules = () => [
   body('name').notEmpty().withMessage('Polje naziv je obavezno'),
   body('content').notEmpty().withMessage('Polje sadržaj je obavezno'),
   body('measureUnitId').notEmpty().withMessage('Odaberite mjernu jedincu'),
+];
+
+const imageValidationRules = () => [
+  body('name').notEmpty().withMessage('Polje naziv je obavezno'),
+  body('source').notEmpty().withMessage('Polje izvor je obavezno'),
 ];
 
 
@@ -66,6 +71,7 @@ module.exports = {
   subspeciesValidationRules,
   measureUnitValidationRules,
   usefulPartValidationRules,
-  bioactiveSubstanceRules,
+  bioactiveSubstanceValidationRules,
+  imageValidationRules,
   validate,
 };

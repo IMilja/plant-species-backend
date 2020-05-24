@@ -9,13 +9,14 @@ exports.up = function (knex) {
       .unsigned()
       .notNullable()
       .references('id')
-      .inTable('plant_species');
+      .inTable('plant_species')
     table
       .integer('image_id')
       .unsigned()
       .notNullable()
       .references('id')
-      .inTable('image');
+      .inTable('image')
+      .onDelete('CASCADE');
   });
 };
 

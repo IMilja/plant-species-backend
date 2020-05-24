@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const BioactiveSubstance = require('../models/BioactiveSubstance');
 const apiResponses = require('../helpers/apiResponses');
-const { bioactiveSubstanceRules, validate } = require('../helpers/validators');
+const { bioactiveSubstanceValidationRules, validate } = require('../helpers/validators');
 
 const router = Router();
 
@@ -31,7 +31,7 @@ router.get('/:id([0-9]+)', async (req, res) => {
   }
 });
 
-router.post('/', bioactiveSubstanceRules(), validate, async (req, res) => {
+router.post('/', bioactiveSubstanceValidationRules(), validate, async (req, res) => {
   try {
     const {
       name,
@@ -53,7 +53,7 @@ router.post('/', bioactiveSubstanceRules(), validate, async (req, res) => {
   }
 });
 
-router.patch('/:id([0-9]+)', bioactiveSubstanceRules(), validate, async (req, res) => {
+router.patch('/:id([0-9]+)', bioactiveSubstanceValidationRules(), validate, async (req, res) => {
   try {
     const { id } = req.params;
 
