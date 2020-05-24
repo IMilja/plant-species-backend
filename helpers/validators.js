@@ -39,7 +39,7 @@ const usefulPartValidationRules = () => [
 const bioactiveSubstanceRules = () => [
   body('name').notEmpty().withMessage('Polje naziv je obavezno'),
   body('content').notEmpty().withMessage('Polje sadržaj je obavezno'),
-  body('unitOfMeasureId').notEmpty().withMessage('Odaberite mjernu jedincu'),
+  body('measureUnitId').notEmpty().withMessage('Odaberite mjernu jedincu'),
 ];
 
 
