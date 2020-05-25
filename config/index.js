@@ -11,6 +11,7 @@ const config = {
   firebaseProjectId: process.env.FIREBASE_PROJECT_ID,
   firebaseKey: process.env.FIREBASE_KEY,
   firebaseBucket: process.env.FIREBASE_BUCKET,
+  jwtSecret: process.env.JWT_SECRET,
 };
 
 module.exports = config;
