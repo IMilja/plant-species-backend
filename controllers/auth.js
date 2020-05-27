@@ -19,13 +19,13 @@ router.post('/login', async (req, res) => {
     });
 
     if (!user) {
-      return apiResponses.notFoundResponse(res, 'Netočno korisničko ime ili lozinka');
+      return apiResponses.validationErrorWithData(res, 'Netočno korisničko ime ili lozinka');
     }
 
     const validPassword = await user.verifyPassword(password);
 
     if (!validPassword) {
-      return apiResponses.notFoundResponse(res, 'Netočno korisničko ime ili lozinka');
+      return apiResponses.validationErrorWithData(res, 'Netočno korisničko ime ili lozinka');
     }
 
     const accessToken = generateAccessToken({
