@@ -1,6 +1,6 @@
 const BaseModel = require('./BaseModel');
 
-class PlantspeciesUsefulpart extends BaseModel {
+class PlantPart extends BaseModel {
   static get tableName() {
     return 'plant_part';
   }
@@ -54,4 +54,4 @@ class PlantspeciesUsefulpart extends BaseModel {
   }
 }
 
-module.exports = PlantspeciesUsefulpart;
+module.exports = PlantPart;

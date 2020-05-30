@@ -35,15 +35,11 @@ router.post('/', bioactiveSubstanceValidationRules(), validate, async (req, res)
   try {
     const {
       name,
-      content,
-      plantPartId,
       measureUnitId,
     } = req.body;
 
     const data = await BioactiveSubstance.query().insertAndFetch({
       name,
-      content,
-      plantPartId,
       measureUnitId,
     });
 
@@ -59,13 +55,11 @@ router.patch('/:id([0-9]+)', bioactiveSubstanceValidationRules(), validate, asyn
 
     const {
       name,
-      content,
       measureUnitId,
     } = req.body;
 
     const data = await BioactiveSubstance.query().patchAndFetchById(id, {
       name,
-      content,
       measureUnitId,
     });
 

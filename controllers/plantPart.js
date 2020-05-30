@@ -133,4 +133,53 @@ router.get('/:id([0-9]+)/bioactive-substances', async (req, res) => {
   }
 });
 
+router.post('/:id([0-9]+)/bioactive-substances', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      bioactiveSubstanceId,
+      content,
+    } = req.body;
+
+    await PlantPart
+      .relatedQuery('bioactiveSubstances')
+      .for(id)
+      .relate({
+        id: bioactiveSubstanceId,
+        content,
+      });
+
+    const data = {
+      content: content || '',
+    };
+
+    return apiResponses.successCreatedWithData(res, data);
+  } catch (error) {
+    return apiResponses.ErrorResponse(res, error.message);
+  }
+});
+
+router.delete('/:id([0-9]+)/bioactive-substances/:bioactiveSubstanceId([0-9]+)', async (req, res) => {
+  try {
+    const {
+      id,
+      bioactiveSubstanceId,
+    } = req.params;
+
+    const rowsDeleted = await PlantPart
+      .relatedQuery('bioactiveSubstances')
+      .for(id)
+      .unrelate()
+      .findById(bioactiveSubstanceId);
+
+    if (!rowsDeleted > 0) {
+      return apiResponses.notFoundResponse(res, 'Resource not found');
+    }
+
+    return apiResponses.successResponseDeleted(res);
+  } catch (error) {
+    return apiResponses.ErrorResponse(res, error.message);
+  }
+});
+
 module.exports = router;
