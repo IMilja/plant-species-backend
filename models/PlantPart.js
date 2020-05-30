@@ -24,27 +24,30 @@ class PlantspeciesUsefulpart extends BaseModel {
         },
       },
       bioactiveSubstances: {
-        relation: BaseModel.HasManyRelation,
+        relation: BaseModel.ManyToManyRelation,
         modelClass: 'BioactiveSubstance',
         join: {
           from: 'plant_part.id',
-          to: 'bioactive_substance.plant_part_id',
+          through: {
+            from: 'plant_part_bioactive_substance.plant_part_id',
+            to: 'plant_part_bioactive_substance.bioactive_substance_id',
+            extra: [
+              'content',
+            ],
+          },
+          to: 'bioactive_substance.id',
         },
       },
       images: {
         relation: BaseModel.ManyToManyRelation,
         modelClass: 'Image',
         join: {
-          from: [
-            'plant_part.id',
-          ],
+          from: 'plant_part.id',
           through: {
             from: 'plant_part_image.plant_part_id',
             to: 'plant_part_image.image_id',
           },
-          to: [
-            'image.id',
-          ],
+          to: 'image.id',
         },
       },
     };

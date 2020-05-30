@@ -7,16 +7,19 @@ class BioactiveSubstance extends BaseModel {
 
   static get relationMappings() {
     return {
-      plantPart: {
-        relation: BaseModel.BelongsToOneRelation,
+      plantParts: {
+        relation: BaseModel.ManyToManyRelation,
         modelClass: 'PlantPart',
         join: {
-          from: [
-            'bioactive_substance.plant_part_id',
-          ],
-          to: [
-            'plant_part.id',
-          ],
+          from: 'bioactive_substance.id',
+          through: {
+            from: 'plant_part_bioactive_substance.bioactive_substance_id',
+            to: 'plant_part_bioactive_substance.plant_part_id',
+            extra: [
+              'content',
+            ],
+          },
+          to: 'plant_part.id',
         },
       },
       measureUnit: {
