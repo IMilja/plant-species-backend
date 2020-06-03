@@ -1,6 +1,10 @@
 const BaseModel = require('./BaseModel');
 
 class PlantPart extends BaseModel {
+  static get idColumn() {
+    return ['plant_species_id', 'useful_part_id'];
+  }
+
   static get tableName() {
     return 'plant_part';
   }
@@ -27,9 +31,15 @@ class PlantPart extends BaseModel {
         relation: BaseModel.ManyToManyRelation,
         modelClass: 'BioactiveSubstance',
         join: {
-          from: 'plant_part.id',
+          from: [
+            'plant_part.plant_species_id',
+            'plant_part.useful_part_id',
+          ],
           through: {
-            from: 'plant_part_bioactive_substance.plant_part_id',
+            from: [
+              'plant_part_bioactive_substance.plant_species_id',
+              'plant_part_bioactive_substance.useful_part_id',
+            ],
             to: 'plant_part_bioactive_substance.bioactive_substance_id',
             extra: [
               'content',
@@ -42,9 +52,15 @@ class PlantPart extends BaseModel {
         relation: BaseModel.ManyToManyRelation,
         modelClass: 'Image',
         join: {
-          from: 'plant_part.id',
+          from: [
+            'plant_part.plant_species_id',
+            'plant_part.useful_part_id',
+          ],
           through: {
-            from: 'plant_part_image.plant_part_id',
+            from: [
+              'plant_part_image.plant_species_id',
+              'plant_part_image.useful_part_id',
+            ],
             to: 'plant_part_image.image_id',
           },
           to: 'image.id',

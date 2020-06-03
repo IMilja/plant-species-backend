@@ -211,4 +211,27 @@ router.get('/:id([0-9]+)/useful-parts', async (req, res) => {
   }
 });
 
+router.delete('/:id([0-9]+)/useful-parts/:usefulPartId', async (req, res) => {
+  try {
+    const {
+      id,
+      usefulPartId,
+    } = req.params;
+
+    const rowsDeleted = await PlantSpecies
+      .relatedQuery('usefulParts')
+      .for(id)
+      .unrelate()
+      .findById(usefulPartId);
+
+    if (!rowsDeleted > 0) {
+      return apiResponses.notFoundResponse(res, 'Resource not found');
+    }
+
+    return apiResponses.successResponseDeleted(res);
+  } catch (error) {
+    return apiResponses.ErrorResponse(res, error.message);
+  }
+});
+
 module.exports = router;

@@ -26,15 +26,18 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.patch('/:id([0-9]+)', async (req, res) => {
+router.patch('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res) => {
   try {
-    const { id } = req.params;
+    const {
+      plantSpeciesId,
+      usefulPartId,
+    } = req.params;
 
     const {
       description,
     } = req.body;
 
-    const data = await PlantPart.query().patchAndFetchById(id, {
+    const data = await PlantPart.query().patchAndFetchById([plantSpeciesId, usefulPartId], {
       description,
     });
 
@@ -44,11 +47,15 @@ router.patch('/:id([0-9]+)', async (req, res) => {
   }
 });
 
-router.delete('/:id([0-9]+)', async (req, res) => {
+router.delete('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res) => {
   try {
-    const { id } = req.params;
+    const {
+      plantSpeciesId,
+      usefulPartId,
+    } = req.params;
 
-    const rowsDeleted = await PlantPart.query().deleteById(id);
+
+    const rowsDeleted = await PlantPart.query().deleteById([plantSpeciesId, usefulPartId]);
 
     if (!rowsDeleted > 0) {
       return apiResponses.notFoundResponse(res, 'Resource not found');
@@ -60,13 +67,16 @@ router.delete('/:id([0-9]+)', async (req, res) => {
   }
 });
 
-router.get('/:id([0-9]+)/images', async (req, res) => {
+router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', async (req, res) => {
   try {
-    const { id } = req.params;
+    const {
+      plantSpeciesId,
+      usefulPartId,
+    } = req.params;
 
     const data = await PlantPart
       .relatedQuery('images')
-      .for(id);
+      .for([plantSpeciesId, usefulPartId]);
 
     return apiResponses.successResponseWithData(res, data);
   } catch (error) {
@@ -74,9 +84,12 @@ router.get('/:id([0-9]+)/images', async (req, res) => {
   }
 });
 
-router.post('/:id([0-9]+)/images', multer.single('image'), imageValidationRules(), validate, async (req, res) => {
+router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', multer.single('image'), imageValidationRules(), validate, async (req, res) => {
   try {
-    const { id } = req.params;
+    const {
+      plantSpeciesId,
+      usefulPartId,
+    } = req.params;
     const { file } = req;
     const {
       name,
@@ -102,7 +115,7 @@ router.post('/:id([0-9]+)/images', multer.single('image'), imageValidationRules(
 
     const data = await PlantPart
       .relatedQuery('images')
-      .for(id)
+      .for([plantSpeciesId, usefulPartId])
       .insertAndFetch({
         name,
         description,
@@ -119,13 +132,16 @@ router.post('/:id([0-9]+)/images', multer.single('image'), imageValidationRules(
   }
 });
 
-router.get('/:id([0-9]+)/bioactive-substances', async (req, res) => {
+router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances', async (req, res) => {
   try {
-    const { id } = req.params;
+    const {
+      plantSpeciesId,
+      usefulPartId,
+    } = req.params;
 
     const data = await PlantPart
       .relatedQuery('bioactiveSubstances')
-      .for(id);
+      .for([plantSpeciesId, usefulPartId]);
 
     return apiResponses.successResponseWithData(res, data);
   } catch (error) {
@@ -133,9 +149,12 @@ router.get('/:id([0-9]+)/bioactive-substances', async (req, res) => {
   }
 });
 
-router.post('/:id([0-9]+)/bioactive-substances', async (req, res) => {
+router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances', async (req, res) => {
   try {
-    const { id } = req.params;
+    const {
+      plantSpeciesId,
+      usefulPartId,
+    } = req.params;
     const {
       bioactiveSubstanceId,
       content,
@@ -143,7 +162,7 @@ router.post('/:id([0-9]+)/bioactive-substances', async (req, res) => {
 
     await PlantPart
       .relatedQuery('bioactiveSubstances')
-      .for(id)
+      .for([plantSpeciesId, usefulPartId])
       .relate({
         id: bioactiveSubstanceId,
         content,
@@ -159,27 +178,31 @@ router.post('/:id([0-9]+)/bioactive-substances', async (req, res) => {
   }
 });
 
-router.delete('/:id([0-9]+)/bioactive-substances/:bioactiveSubstanceId([0-9]+)', async (req, res) => {
-  try {
-    const {
-      id,
-      bioactiveSubstanceId,
-    } = req.params;
+router.delete(
+  '/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances/:bioactiveSubstanceId([0-9]+)',
+  async (req, res) => {
+    try {
+      const {
+        plantSpeciesId,
+        usefulPartId,
+        bioactiveSubstanceId,
+      } = req.params;
 
-    const rowsDeleted = await PlantPart
-      .relatedQuery('bioactiveSubstances')
-      .for(id)
-      .unrelate()
-      .findById(bioactiveSubstanceId);
+      const rowsDeleted = await PlantPart
+        .relatedQuery('bioactiveSubstances')
+        .for([plantSpeciesId, usefulPartId])
+        .unrelate()
+        .findById(bioactiveSubstanceId);
 
-    if (!rowsDeleted > 0) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      if (!rowsDeleted > 0) {
+        return apiResponses.notFoundResponse(res, 'Resource not found');
+      }
+
+      return apiResponses.successResponseDeleted(res);
+    } catch (error) {
+      return apiResponses.ErrorResponse(res, error.message);
     }
-
-    return apiResponses.successResponseDeleted(res);
-  } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
-  }
-});
+  },
+);
 
 module.exports = router;

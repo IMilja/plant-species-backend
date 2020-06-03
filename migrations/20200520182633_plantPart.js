@@ -2,7 +2,8 @@
 
 exports.up = function (knex) {
   return knex.schema.createTable('plant_part', (table) => {
-    table.increments().primary();
+    table
+      .primary(['plant_species_id', 'useful_part_id']);
     table
       .integer('plant_species_id')
       .unsigned()
@@ -17,7 +18,6 @@ exports.up = function (knex) {
       .references('id')
       .inTable('useful_part')
       .index();
-    table.unique(['plant_species_id', 'useful_part_id']);
     table.text('description');
   });
 };

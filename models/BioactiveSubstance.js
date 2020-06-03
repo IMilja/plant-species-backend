@@ -14,12 +14,18 @@ class BioactiveSubstance extends BaseModel {
           from: 'bioactive_substance.id',
           through: {
             from: 'plant_part_bioactive_substance.bioactive_substance_id',
-            to: 'plant_part_bioactive_substance.plant_part_id',
+            to: [
+              'plant_part_bioactive_substance.plant_species_id',
+              'plant_part_bioactive_substance.useful_part_id',
+            ],
             extra: [
               'content',
             ],
           },
-          to: 'plant_part.id',
+          to: [
+            'plant_part.plant_species_id',
+            'plant_part.useful_part_id',
+          ],
         },
       },
       measureUnit: {
