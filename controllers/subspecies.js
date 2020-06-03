@@ -35,12 +35,12 @@ router.post('/', subspeciesValidationRules(), validate, async (req, res) => {
   try {
     const {
       name,
-      plantspeciesId,
+      plantSpeciesId,
     } = req.body;
 
     const data = await Subspecies.query().insertAndFetch({
       name,
-      plantspeciesId,
+      plantSpeciesId,
     });
 
     return apiResponses.successCreatedWithData(res, data);
@@ -55,12 +55,12 @@ router.patch('/:id([0-9]+)', subspeciesValidationRules(), validate, async (req, 
 
     const {
       name,
-      plantspeciesId,
+      plantSpeciesId,
     } = req.body;
 
     const data = await Subspecies.query().patchAndFetchById(id, {
       name,
-      plantspeciesId,
+      plantSpeciesId,
     });
 
     if (!data) {
