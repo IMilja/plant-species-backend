@@ -234,4 +234,37 @@ router.delete('/:id([0-9]+)/useful-parts/:usefulPartId', async (req, res) => {
   }
 });
 
+router.get('/search', async (req, res) => {
+  try {
+    const {
+      plantSpeciesCroatianName,
+      bioactiveSubstances,
+      botanicalFamilies,
+      usefulParts,
+    } = req.query;
+
+    const data = await PlantSpecies
+      .query()
+      .alias('ps')
+      .skipUndefined()
+      .leftJoinRelated('genus.botanicalFamily', { alias: 'bf' })
+      .leftJoinRelated('plantParts.bioactiveSubstances', { alias: 'bs' })
+      .leftJoinRelated('usefulParts', { alias: 'up' })
+      .where('ps.croatian_name', 'like', plantSpeciesCroatianName)
+      .whereIn('bf.id', botanicalFamilies)
+      .whereIn('bs.id', bioactiveSubstances)
+      .whereIn('up.id', usefulParts)
+      .withGraphFetched({
+        genus: {
+          botanicalFamily: true,
+        },
+      })
+      .groupBy('ps.id');
+
+    return apiResponses.successResponseWithData(res, data);
+  } catch (error) {
+    return apiResponses.ErrorResponse(res, error.message);
+  }
+});
+
 module.exports = router;
