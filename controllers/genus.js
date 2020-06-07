@@ -7,7 +7,10 @@ const router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const data = await Genus.query();
+    const data = await Genus.query()
+      .withGraphFetched({
+        botanicalFamily: true,
+      });
 
     return apiResponses.successResponseWithData(res, data);
   } catch (error) {
@@ -41,7 +44,10 @@ router.post('/', genusValidationRules(), validate, async (req, res) => {
     const data = await Genus.query().insertAndFetch({
       name,
       botanicalFamilyId,
-    });
+    })
+      .withGraphFetched({
+        botanicalFamily: true,
+      });
 
     return apiResponses.successCreatedWithData(res, data);
   } catch (error) {
@@ -61,7 +67,10 @@ router.patch('/:id([0-9]+)', genusValidationRules(), validate, async (req, res) 
     const data = await Genus.query().patchAndFetchById(id, {
       name,
       botanicalFamilyId,
-    });
+    })
+      .withGraphFetched({
+        botanicalFamily: true,
+      });
 
     if (!data) {
       return apiResponses.notFoundResponse(res, 'Resource not found');

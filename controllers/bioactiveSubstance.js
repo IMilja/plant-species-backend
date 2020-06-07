@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 const { Router } = require('express');
 const BioactiveSubstance = require('../models/BioactiveSubstance');
 const apiResponses = require('../helpers/apiResponses');
@@ -7,7 +8,9 @@ const router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const data = await BioactiveSubstance.query();
+    const data = await BioactiveSubstance.query().withGraphFetched({
+      measureUnit: true,
+    });
 
     return apiResponses.successResponseWithData(res, data);
   } catch (error) {
@@ -41,7 +44,10 @@ router.post('/', bioactiveSubstanceValidationRules(), validate, async (req, res)
     const data = await BioactiveSubstance.query().insertAndFetch({
       name,
       measureUnitId,
-    });
+    })
+      .withGraphFetched({
+        measureUnit: true,
+      });
 
     return apiResponses.successCreatedWithData(res, data);
   } catch (error) {

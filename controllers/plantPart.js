@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const PlantPart = require('../models/PlantPart');
+const BioactiveSubstance = require('../models/BioactiveSubstance');
 const apiResponses = require('../helpers/apiResponses');
 const { imageValidationRules, validate } = require('../helpers/validators');
 const { multer, uploadImageToStorage } = require('../lib/imageUploader');
@@ -18,7 +19,10 @@ router.post('/', async (req, res) => {
       usefulPartId,
       plantSpeciesId,
       description,
-    });
+    })
+      .withGraphFetched({
+        usefulPart: true,
+      });
 
     return apiResponses.successCreatedWithData(res, data);
   } catch (error) {
@@ -160,7 +164,7 @@ router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances
       content,
     } = req.body;
 
-    await PlantPart
+    const rowsRelated = await PlantPart
       .relatedQuery('bioactiveSubstances')
       .for([plantSpeciesId, usefulPartId])
       .relate({
@@ -168,8 +172,22 @@ router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances
         content,
       });
 
+    if (!rowsRelated > 0) {
+      return apiResponses.notFoundResponse(res, 'Resource not found');
+    }
+
+    const bioactiveSubstance = await BioactiveSubstance
+      .query()
+      .findById(bioactiveSubstanceId)
+      .withGraphFetched({
+        measureUnit: true,
+      });
+
     const data = {
-      content: content || '',
+      bioactiveSubstanceId: bioactiveSubstance.id,
+      name: bioactiveSubstance.name,
+      measureUnitName: bioactiveSubstance.measureUnit.name,
+      content,
     };
 
     return apiResponses.successCreatedWithData(res, data);

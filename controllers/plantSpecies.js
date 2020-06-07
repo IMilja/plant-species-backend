@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 const { Router } = require('express');
 const PlantSpecies = require('../models/PlantSpecies');
 const apiResponses = require('../helpers/apiResponses');
@@ -229,6 +230,37 @@ router.delete('/:id([0-9]+)/useful-parts/:usefulPartId', async (req, res) => {
     }
 
     return apiResponses.successResponseDeleted(res);
+  } catch (error) {
+    return apiResponses.ErrorResponse(res, error.message);
+  }
+});
+
+router.get('/:id([0-9]+)/bioactive-substances', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = await PlantSpecies
+      .query()
+      .alias('ps')
+      .select(
+        'bs.id AS bioactiveSubstanceId',
+        'bs.name',
+        'mu.name AS measureUnitName',
+        'ppbs.content',
+        'up.id AS usefulPartId',
+        'up.croatian_name as usefulPartCroatianName',
+        'up.latin_name as usefulPartLatinName',
+      )
+      .join('plant_part as pp', 'id', 'pp.plant_species_id')
+      .leftJoin('useful_part as up', 'pp.useful_part_id', 'up.id')
+      .leftJoin('plant_part_bioactive_substance AS ppbs', function () {
+        this.on('pp.plant_species_id', '=', 'ppbs.plant_species_id').andOn('pp.useful_part_id', '=', 'ppbs.useful_part_id');
+      })
+      .leftJoin('bioactive_substance as bs', 'ppbs.bioactive_substance_id', 'bs.id')
+      .join('measure_unit AS mu', 'bs.measure_unit_id', 'mu.id')
+      .where('ps.id', id);
+
+    return apiResponses.successResponseWithData(res, data);
   } catch (error) {
     return apiResponses.ErrorResponse(res, error.message);
   }

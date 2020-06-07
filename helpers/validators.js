@@ -8,7 +8,7 @@ const botanicalFamilyValidationRules = () => [
 
 const genusValidationRules = () => [
   body('name').notEmpty().withMessage('Polje naziv je obavezno'),
-  body('botanicalFamilyId').notEmpty().withMessage('Polje biljna prodiva je obavezno'),
+  body('botanicalFamilyId').notEmpty().withMessage('Polje botanička porodica je obavezno'),
 ];
 
 const plantSpeciesValidationRules = () => [
