@@ -2,50 +2,54 @@ const { body, validationResult } = require('express-validator');
 const apiResponses = require('./apiResponses');
 
 const botanicalFamilyValidationRules = () => [
-  body('croatianName').notEmpty().withMessage('Polje hrvatski naziv je obavezno'),
-  body('latinName').notEmpty().withMessage('Polje latinski naziv je obavezno'),
+  body('croatianName').notEmpty().withMessage('Hrvatski naziv je obavezan'),
+  body('latinName').notEmpty().withMessage('Latinski naziv je obavezan'),
 ];
 
 const genusValidationRules = () => [
-  body('name').notEmpty().withMessage('Polje naziv je obavezno'),
-  body('botanicalFamilyId').notEmpty().withMessage('Polje botanička porodica je obavezno'),
+  body('name').notEmpty().withMessage('Naziv je obavezan'),
+  body('botanicalFamilyId').notEmpty().withMessage('Botanička porodica je obavezna'),
 ];
 
 const plantSpeciesValidationRules = () => [
-  body('croatianName').notEmpty().withMessage('Polje hrvatski naziv je obavezno'),
-  body('latinName').notEmpty().withMessage('Polje latinski naziv je obavezno'),
-  body('description').notEmpty().withMessage('Polje opis je obavezno'),
-  body('genusId').notEmpty().withMessage('Polje biljni rod je obavezno'),
+  body('croatianName').notEmpty().withMessage('Hrvatski naziv je obavezan'),
+  body('latinName').notEmpty().withMessage('Latinski naziv je obavezan'),
+  body('description').notEmpty().withMessage('opis je obavezan'),
+  body('genusId').notEmpty().withMessage('biljni rod je obavezan'),
 ];
 
 const systematistValidationRules = () => [
-  body('name').notEmpty().withMessage('Polje naziv je obavezno'),
+  body('name').notEmpty().withMessage('Naziv je obavezan'),
 ];
 
 const subspeciesValidationRules = () => [
-  body('name').notEmpty().withMessage('Polje naziv je obavezno'),
-  body('plantSpeciesId').notEmpty().withMessage('Polje biljna vrsta je obavezeno'),
+  body('name').notEmpty().withMessage('Naziv je obavezan'),
+  body('plantSpeciesId').notEmpty().withMessage('biljna vrsta je obavezna'),
 ];
 
 const measureUnitValidationRules = () => [
-  body('name').notEmpty().withMessage('Polje naziv je obavezno'),
+  body('name').notEmpty().withMessage('Naziv je obavezan'),
 ];
 
 const usefulPartValidationRules = () => [
-  body('croatianName').notEmpty().withMessage('Polje hrvatski naziv je obavezno'),
-  body('latinName').notEmpty().withMessage('Polje latinski naziv je obavezno'),
+  body('croatianName').notEmpty().withMessage('Hrvatski naziv je obavezan'),
+  body('latinName').notEmpty().withMessage('Latinski naziv je obavezan'),
 ];
 
 const bioactiveSubstanceValidationRules = () => [
-  body('name').notEmpty().withMessage('Polje naziv je obavezno'),
-  body('measureUnitId').notEmpty().withMessage('Odaberite mjernu jedincu'),
+  body('name').notEmpty().withMessage('Naziv je obavezan'),
+  body('measureUnitId').notEmpty().withMessage('Mjerna jedinica je obavezna'),
 ];
 
 const imageValidationRules = () => [
-  body('name').notEmpty().withMessage('Polje naziv je obavezno'),
-  body('source').notEmpty().withMessage('Polje izvor je obavezno'),
+  body('name').notEmpty().withMessage('Naziv je obavezan'),
+  body('source').notEmpty().withMessage('Izvor je obavezan'),
 ];
 
+const plantPartBioactiveSubstanceRules = () => [
+  body('bioactiveSubstanceId').notEmpty().withMessage('Bioaktivna tvar je obavezna'),
+  body('content').notEmpty().withMessage('Sadržaj je obavezan'),
+];
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -72,5 +76,6 @@ module.exports = {
   usefulPartValidationRules,
   bioactiveSubstanceValidationRules,
   imageValidationRules,
+  plantPartBioactiveSubstanceRules,
   validate,
 };

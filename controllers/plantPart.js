@@ -2,7 +2,11 @@ const { Router } = require('express');
 const PlantPart = require('../models/PlantPart');
 const BioactiveSubstance = require('../models/BioactiveSubstance');
 const apiResponses = require('../helpers/apiResponses');
-const { imageValidationRules, validate } = require('../helpers/validators');
+const {
+  imageValidationRules,
+  plantPartBioactiveSubstanceRules,
+  validate,
+} = require('../helpers/validators');
 const { multer, uploadImageToStorage } = require('../lib/imageUploader');
 
 const router = Router();
@@ -153,48 +157,51 @@ router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances'
   }
 });
 
-router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances', async (req, res) => {
-  try {
-    const {
-      plantSpeciesId,
-      usefulPartId,
-    } = req.params;
-    const {
-      bioactiveSubstanceId,
-      content,
-    } = req.body;
-
-    const rowsRelated = await PlantPart
-      .relatedQuery('bioactiveSubstances')
-      .for([plantSpeciesId, usefulPartId])
-      .relate({
-        id: bioactiveSubstanceId,
+router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances',
+  plantPartBioactiveSubstanceRules(),
+  validate,
+  async (req, res) => {
+    try {
+      const {
+        plantSpeciesId,
+        usefulPartId,
+      } = req.params;
+      const {
+        bioactiveSubstanceId,
         content,
-      });
+      } = req.body;
 
-    if (!rowsRelated > 0) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      const rowsRelated = await PlantPart
+        .relatedQuery('bioactiveSubstances')
+        .for([plantSpeciesId, usefulPartId])
+        .relate({
+          id: bioactiveSubstanceId,
+          content,
+        });
+
+      if (!rowsRelated > 0) {
+        return apiResponses.notFoundResponse(res, 'Resource not found');
+      }
+
+      const bioactiveSubstance = await BioactiveSubstance
+        .query()
+        .findById(bioactiveSubstanceId)
+        .withGraphFetched({
+          measureUnit: true,
+        });
+
+      const data = {
+        bioactiveSubstanceId: bioactiveSubstance.id,
+        name: bioactiveSubstance.name,
+        measureUnitName: bioactiveSubstance.measureUnit.name,
+        content,
+      };
+
+      return apiResponses.successCreatedWithData(res, data);
+    } catch (error) {
+      return apiResponses.ErrorResponse(res, error.message);
     }
-
-    const bioactiveSubstance = await BioactiveSubstance
-      .query()
-      .findById(bioactiveSubstanceId)
-      .withGraphFetched({
-        measureUnit: true,
-      });
-
-    const data = {
-      bioactiveSubstanceId: bioactiveSubstance.id,
-      name: bioactiveSubstance.name,
-      measureUnitName: bioactiveSubstance.measureUnit.name,
-      content,
-    };
-
-    return apiResponses.successCreatedWithData(res, data);
-  } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
-  }
-});
+  });
 
 router.delete(
   '/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances/:bioactiveSubstanceId([0-9]+)',
