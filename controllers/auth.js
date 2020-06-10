@@ -1,11 +1,11 @@
 const { Router } = require('express');
 const User = require('../models/User');
-const apiResponses = require('../helpers/apiResponses');
+const responses = require('../helpers/responses');
 const { generateAccessToken } = require('../lib/jwtTokens');
 
 const router = Router();
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
   try {
     const {
       email,
@@ -19,13 +19,13 @@ router.post('/login', async (req, res) => {
     });
 
     if (!user) {
-      return apiResponses.validationErrorWithData(res, 'Netočno korisničko ime ili lozinka');
+      return responses.unauthorizedResponse(res, 'Netočno korisničko ime ili lozinka');
     }
 
     const validPassword = await user.verifyPassword(password);
 
     if (!validPassword) {
-      return apiResponses.validationErrorWithData(res, 'Netočno korisničko ime ili lozinka');
+      return responses.unauthorizedResponse(res, 'Netočno korisničko ime ili lozinka');
     }
 
     const accessToken = generateAccessToken({
@@ -34,12 +34,9 @@ router.post('/login', async (req, res) => {
       role: user.role.name,
     });
 
-    return res.status(200).json({
-      status: 'success',
-      accessToken,
-    });
+    return responses.successResponse(res, accessToken);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 

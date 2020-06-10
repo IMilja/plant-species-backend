@@ -1,37 +1,37 @@
 const { Router } = require('express');
 const UsefulPart = require('../models/UsefulPart');
-const apiResponses = require('../helpers/apiResponses');
+const responses = require('../helpers/responses');
 const { usefulPartValidationRules, validate } = require('../helpers/validators');
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const data = await UsefulPart.query();
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/:id([0-9]+)', async (req, res) => {
+router.get('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const data = await UsefulPart.query().findById(id);
 
     if (!data) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.post('/', usefulPartValidationRules(), validate, async (req, res) => {
+router.post('/', usefulPartValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       croatianName,
@@ -43,13 +43,13 @@ router.post('/', usefulPartValidationRules(), validate, async (req, res) => {
       latinName,
     });
 
-    return apiResponses.successCreatedWithData(res, data);
+    return responses.successCreated(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.patch('/:id([0-9]+)', usefulPartValidationRules(), validate, async (req, res) => {
+router.patch('/:id([0-9]+)', usefulPartValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -64,29 +64,29 @@ router.patch('/:id([0-9]+)', usefulPartValidationRules(), validate, async (req, 
     });
 
     if (!data) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
 
-router.delete('/:id([0-9]+)', async (req, res) => {
+router.delete('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const rowsDeleted = await UsefulPart.query().deleteById(id);
 
     if (!rowsDeleted > 0) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseDeleted(res);
+    return responses.successDeleted(res);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 

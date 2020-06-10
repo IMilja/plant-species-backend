@@ -1,40 +1,40 @@
 const { Router } = require('express');
 const Genus = require('../models/Genus');
-const apiResponses = require('../helpers/apiResponses');
+const responses = require('../helpers/responses');
 const { genusValidationRules, validate } = require('../helpers/validators');
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const data = await Genus.query()
       .withGraphFetched({
         botanicalFamily: true,
       });
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/:id([0-9]+)', async (req, res) => {
+router.get('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const data = await Genus.query().findById(id);
 
     if (!data) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.post('/', genusValidationRules(), validate, async (req, res) => {
+router.post('/', genusValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       name,
@@ -49,13 +49,13 @@ router.post('/', genusValidationRules(), validate, async (req, res) => {
         botanicalFamily: true,
       });
 
-    return apiResponses.successCreatedWithData(res, data);
+    return responses.successCreated(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.patch('/:id([0-9]+)', genusValidationRules(), validate, async (req, res) => {
+router.patch('/:id([0-9]+)', genusValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -73,29 +73,29 @@ router.patch('/:id([0-9]+)', genusValidationRules(), validate, async (req, res) 
       });
 
     if (!data) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
 
-router.delete('/:id([0-9]+)', async (req, res) => {
+router.delete('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const rowsDeleted = await Genus.query().deleteById(id);
 
     if (!rowsDeleted > 0) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseDeleted(res);
+    return responses.successDeleted(res);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 

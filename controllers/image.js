@@ -1,11 +1,11 @@
 const { Router } = require('express');
 const Image = require('../models/Image');
-const apiResponses = require('../helpers/apiResponses');
+const responses = require('../helpers/responses');
 const { deleteImageFromStorage } = require('../lib/imageUploader');
 
 const router = Router();
 
-router.delete('/:id([0-9]+)', async (req, res) => {
+router.delete('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -20,20 +20,20 @@ router.delete('/:id([0-9]+)', async (req, res) => {
     const rowsDeleted = await Image.query().deleteById(id);
 
     if (!rowsDeleted) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
     if (image) {
       deleteImageFromStorage(image.fileName);
     }
 
-    return apiResponses.successResponseDeleted(res);
+    return responses.successDeleted(res);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.patch('/:id([0-9]+)', async (req, res) => {
+router.patch('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -52,12 +52,12 @@ router.patch('/:id([0-9]+)', async (req, res) => {
     });
 
     if (!data) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 

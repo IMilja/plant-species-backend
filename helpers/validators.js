@@ -1,5 +1,5 @@
 const { body, validationResult } = require('express-validator');
-const apiResponses = require('./apiResponses');
+const responses = require('./responses');
 
 const botanicalFamilyValidationRules = () => [
   body('croatianName').notEmpty().withMessage('Hrvatski naziv je obavezan'),
@@ -14,8 +14,8 @@ const genusValidationRules = () => [
 const plantSpeciesValidationRules = () => [
   body('croatianName').notEmpty().withMessage('Hrvatski naziv je obavezan'),
   body('latinName').notEmpty().withMessage('Latinski naziv je obavezan'),
-  body('description').notEmpty().withMessage('opis je obavezan'),
-  body('genusId').notEmpty().withMessage('biljni rod je obavezan'),
+  body('description').notEmpty().withMessage('Opis je obavezan'),
+  body('genusId').notEmpty().withMessage('Biljni rod je obavezan'),
 ];
 
 const systematistValidationRules = () => [
@@ -24,7 +24,7 @@ const systematistValidationRules = () => [
 
 const subspeciesValidationRules = () => [
   body('name').notEmpty().withMessage('Naziv je obavezan'),
-  body('plantSpeciesId').notEmpty().withMessage('biljna vrsta je obavezna'),
+  body('plantSpeciesId').notEmpty().withMessage('Biljna vrsta je obavezna'),
 ];
 
 const measureUnitValidationRules = () => [
@@ -58,12 +58,7 @@ const validate = (req, res, next) => {
     return next();
   }
 
-  const extractedErrors = [];
-
-  errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
-
-  return apiResponses
-    .validationErrorWithData(res, extractedErrors);
+  return responses.badRequestResponse(res, 'incorrect parameters', errors.array());
 };
 
 module.exports = {

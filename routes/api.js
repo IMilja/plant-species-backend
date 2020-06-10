@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const responses = require('../helpers/responses');
 const botanicalFamilyController = require('../controllers/botanicalFamily');
 const genusController = require('../controllers/genus');
 const systematistController = require('../controllers/systematist');
@@ -22,5 +23,7 @@ router.use('/plant-parts', plantPartController);
 router.use('/measure-units', measureUnitController);
 router.use('/bioactive-substances', bioactiveSubstanceController);
 router.use('/images', imageController);
+
+router.use('*', (req, res) => responses.notFoundResponse(res, 'route not found'));
 
 module.exports = router;

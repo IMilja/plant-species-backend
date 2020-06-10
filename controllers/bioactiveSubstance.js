@@ -1,40 +1,39 @@
-/* eslint-disable func-names */
 const { Router } = require('express');
 const BioactiveSubstance = require('../models/BioactiveSubstance');
-const apiResponses = require('../helpers/apiResponses');
+const responses = require('../helpers/responses');
 const { bioactiveSubstanceValidationRules, validate } = require('../helpers/validators');
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const data = await BioactiveSubstance.query().withGraphFetched({
       measureUnit: true,
     });
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/:id([0-9]+)', async (req, res) => {
+router.get('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const data = await BioactiveSubstance.query().findById(id);
 
     if (!data) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.post('/', bioactiveSubstanceValidationRules(), validate, async (req, res) => {
+router.post('/', bioactiveSubstanceValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       name,
@@ -49,13 +48,13 @@ router.post('/', bioactiveSubstanceValidationRules(), validate, async (req, res)
         measureUnit: true,
       });
 
-    return apiResponses.successCreatedWithData(res, data);
+    return responses.successCreated(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.patch('/:id([0-9]+)', bioactiveSubstanceValidationRules(), validate, async (req, res) => {
+router.patch('/:id([0-9]+)', bioactiveSubstanceValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -70,29 +69,29 @@ router.patch('/:id([0-9]+)', bioactiveSubstanceValidationRules(), validate, asyn
     });
 
     if (!data) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
 
-router.delete('/:id([0-9]+)', async (req, res) => {
+router.delete('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const rowsDeleted = await BioactiveSubstance.query().deleteById(id);
 
     if (!rowsDeleted > 0) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseDeleted(res);
+    return responses.successDeleted(res);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 

@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const PlantPart = require('../models/PlantPart');
 const BioactiveSubstance = require('../models/BioactiveSubstance');
-const apiResponses = require('../helpers/apiResponses');
+const responses = require('../helpers/responses');
 const {
   imageValidationRules,
   plantPartBioactiveSubstanceRules,
@@ -11,7 +11,7 @@ const { multer, uploadImageToStorage } = require('../lib/imageUploader');
 
 const router = Router();
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
   try {
     const {
       usefulPartId,
@@ -28,13 +28,13 @@ router.post('/', async (req, res) => {
         usefulPart: true,
       });
 
-    return apiResponses.successCreatedWithData(res, data);
+    return responses.successCreated(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.patch('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res) => {
+router.patch('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -49,13 +49,13 @@ router.patch('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res) 
       description,
     });
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(req, error.message);
+    return next(error);
   }
 });
 
-router.delete('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res) => {
+router.delete('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -66,16 +66,16 @@ router.delete('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res)
     const rowsDeleted = await PlantPart.query().deleteById([plantSpeciesId, usefulPartId]);
 
     if (!rowsDeleted > 0) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseDeleted(res);
+    return responses.successDeleted(res);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', async (req, res) => {
+router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -86,13 +86,13 @@ router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', async (req, 
       .relatedQuery('images')
       .for([plantSpeciesId, usefulPartId]);
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', multer.single('image'), imageValidationRules(), validate, async (req, res) => {
+router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', multer.single('image'), imageValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -134,13 +134,13 @@ router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', multer.sing
         customUpload,
       });
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances', async (req, res) => {
+router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances', async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -151,16 +151,16 @@ router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances'
       .relatedQuery('bioactiveSubstances')
       .for([plantSpeciesId, usefulPartId]);
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
 router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances',
   plantPartBioactiveSubstanceRules(),
   validate,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const {
         plantSpeciesId,
@@ -180,7 +180,7 @@ router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances
         });
 
       if (!rowsRelated > 0) {
-        return apiResponses.notFoundResponse(res, 'Resource not found');
+        return responses.notFoundResponse(res, 'resource not found');
       }
 
       const bioactiveSubstance = await BioactiveSubstance
@@ -197,15 +197,15 @@ router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances
         content,
       };
 
-      return apiResponses.successCreatedWithData(res, data);
+      return responses.successCreated(res, data);
     } catch (error) {
-      return apiResponses.ErrorResponse(res, error.message);
+      return next(error);
     }
   });
 
 router.delete(
   '/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances/:bioactiveSubstanceId([0-9]+)',
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const {
         plantSpeciesId,
@@ -220,12 +220,12 @@ router.delete(
         .findById(bioactiveSubstanceId);
 
       if (!rowsDeleted > 0) {
-        return apiResponses.notFoundResponse(res, 'Resource not found');
+        return responses.notFoundResponse(res, 'resource not found');
       }
 
-      return apiResponses.successResponseDeleted(res);
+      return responses.successDeleted(res);
     } catch (error) {
-      return apiResponses.ErrorResponse(res, error.message);
+      return next(error);
     }
   },
 );

@@ -1,13 +1,13 @@
 /* eslint-disable func-names */
 const { Router } = require('express');
 const PlantSpecies = require('../models/PlantSpecies');
-const apiResponses = require('../helpers/apiResponses');
+const responses = require('../helpers/responses');
 const { plantSpeciesValidationRules, imageValidationRules, validate } = require('../helpers/validators');
 const { multer, uploadImageToStorage } = require('../lib/imageUploader');
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const data = await PlantSpecies.query().withGraphFetched({
       genus: {
@@ -15,13 +15,13 @@ router.get('/', async (req, res) => {
       },
     });
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/:id([0-9]+)', async (req, res) => {
+router.get('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -33,16 +33,16 @@ router.get('/:id([0-9]+)', async (req, res) => {
     });
 
     if (!data) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.post('/', plantSpeciesValidationRules(), validate, async (req, res) => {
+router.post('/', plantSpeciesValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       croatianName,
@@ -66,13 +66,13 @@ router.post('/', plantSpeciesValidationRules(), validate, async (req, res) => {
       },
     });
 
-    return apiResponses.successCreatedWithData(res, data);
+    return responses.successCreated(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.patch('/:id([0-9]+)', plantSpeciesValidationRules(), validate, async (req, res) => {
+router.patch('/:id([0-9]+)', plantSpeciesValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -99,33 +99,33 @@ router.patch('/:id([0-9]+)', plantSpeciesValidationRules(), validate, async (req
     });
 
     if (!data) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
 
-router.delete('/:id([0-9]+)', async (req, res) => {
+router.delete('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const rowsDeleted = await PlantSpecies.query().deleteById(id);
 
     if (!rowsDeleted > 0) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseDeleted(res);
+    return responses.successDeleted(res);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/:id([0-9]+)/images', async (req, res) => {
+router.get('/:id([0-9]+)/images', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -133,13 +133,13 @@ router.get('/:id([0-9]+)/images', async (req, res) => {
       .relatedQuery('images')
       .for(id);
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.post('/:id([0-9]+)/images', multer.single('image'), imageValidationRules(), validate, async (req, res) => {
+router.post('/:id([0-9]+)/images', multer.single('image'), imageValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { file } = req;
@@ -178,13 +178,13 @@ router.post('/:id([0-9]+)/images', multer.single('image'), imageValidationRules(
         customUpload,
       });
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/:id([0-9]+)/subspecies', async (req, res) => {
+router.get('/:id([0-9]+)/subspecies', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -192,13 +192,13 @@ router.get('/:id([0-9]+)/subspecies', async (req, res) => {
       .relatedQuery('subspecies')
       .for(id);
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/:id([0-9]+)/useful-parts', async (req, res) => {
+router.get('/:id([0-9]+)/useful-parts', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -206,13 +206,13 @@ router.get('/:id([0-9]+)/useful-parts', async (req, res) => {
       .relatedQuery('usefulParts')
       .for(id);
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.delete('/:id([0-9]+)/useful-parts/:usefulPartId', async (req, res) => {
+router.delete('/:id([0-9]+)/useful-parts/:usefulPartId', async (req, res, next) => {
   try {
     const {
       id,
@@ -226,16 +226,16 @@ router.delete('/:id([0-9]+)/useful-parts/:usefulPartId', async (req, res) => {
       .findById(usefulPartId);
 
     if (!rowsDeleted > 0) {
-      return apiResponses.notFoundResponse(res, 'Resource not found');
+      return responses.notFoundResponse(res, 'resource not found');
     }
 
-    return apiResponses.successResponseDeleted(res);
+    return responses.successDeleted(res);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/:id([0-9]+)/bioactive-substances', async (req, res) => {
+router.get('/:id([0-9]+)/bioactive-substances', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -260,13 +260,13 @@ router.get('/:id([0-9]+)/bioactive-substances', async (req, res) => {
       .join('measure_unit AS mu', 'bs.measure_unit_id', 'mu.id')
       .where('ps.id', id);
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
-router.get('/search', async (req, res) => {
+router.get('/search', async (req, res, next) => {
   try {
     const {
       plantSpeciesCroatianName,
@@ -293,9 +293,9 @@ router.get('/search', async (req, res) => {
       })
       .groupBy('ps.id');
 
-    return apiResponses.successResponseWithData(res, data);
+    return responses.successResponse(res, data);
   } catch (error) {
-    return apiResponses.ErrorResponse(res, error.message);
+    return next(error);
   }
 });
 
