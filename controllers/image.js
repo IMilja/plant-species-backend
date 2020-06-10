@@ -5,6 +5,35 @@ const { deleteImageFromStorage } = require('../lib/imageUploader');
 
 const router = Router();
 
+router.get('/', async (req, res, next) => {
+  try {
+    const {
+      plantSpeciesId,
+    } = req.query;
+
+    const data = await Image
+      .query()
+      .alias('img')
+      .joinRelated('plantParts.usefulPart', { alias: 'pp' })
+      .skipUndefined()
+      .where('pp.plant_species_id', plantSpeciesId)
+      .select(
+        'img.name',
+        'img.description',
+        'img.source',
+        'img.upload_date',
+        'img.image_url',
+        'croatian_name',
+        'latin_name',
+        'pp.description as useful_part_description',
+      );
+
+    return responses.successResponse(res, data);
+  } catch (error) {
+    return next(error);
+  }
+});
+
 router.delete('/:id([0-9]+)', async (req, res, next) => {
   try {
     const { id } = req.params;
