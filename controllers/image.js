@@ -25,7 +25,6 @@ router.get('/', async (req, res, next) => {
         'img.image_url',
         'croatian_name',
         'latin_name',
-        'pp.description as useful_part_description',
       );
 
     return responses.successResponse(res, data);

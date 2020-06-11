@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const PlantPart = require('../models/PlantPart');
 const BioactiveSubstance = require('../models/BioactiveSubstance');
+const UsefulPart = require('../models/UsefulPart');
 const responses = require('../helpers/responses');
 const {
   imageValidationRules,
@@ -134,7 +135,20 @@ router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', multer.sing
         customUpload,
       });
 
-    return responses.successResponse(res, data);
+    const usefulPart = await UsefulPart
+      .query()
+      .select(
+        'croatian_name',
+        'latin_name',
+      )
+      .findById(usefulPartId);
+
+    const dataSet = {
+      ...data,
+      ...usefulPart,
+    };
+
+    return responses.successResponse(res, dataSet);
   } catch (error) {
     return next(error);
   }
