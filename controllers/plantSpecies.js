@@ -2,7 +2,11 @@
 const { Router } = require('express');
 const PlantSpecies = require('../models/PlantSpecies');
 const responses = require('../helpers/responses');
-const { plantSpeciesValidationRules, imageValidationRules, validate } = require('../helpers/validators');
+const {
+  plantSpeciesValidationRules,
+  plantSpeiesImageValidationRules,
+  validate,
+} = require('../helpers/validators');
 const { multer, uploadImageToStorage } = require('../lib/imageUploader');
 
 const router = Router();
@@ -21,7 +25,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id([0-9]+)', async (req, res, next) => {
+router.get('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -72,7 +76,7 @@ router.post('/', plantSpeciesValidationRules(), validate, async (req, res, next)
   }
 });
 
-router.patch('/:id([0-9]+)', plantSpeciesValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', plantSpeciesValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -109,7 +113,7 @@ router.patch('/:id([0-9]+)', plantSpeciesValidationRules(), validate, async (req
 });
 
 
-router.delete('/:id([0-9]+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -125,7 +129,7 @@ router.delete('/:id([0-9]+)', async (req, res, next) => {
   }
 });
 
-router.get('/:id([0-9]+)/images', async (req, res, next) => {
+router.get('/:id(\\d+)/images', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -139,7 +143,7 @@ router.get('/:id([0-9]+)/images', async (req, res, next) => {
   }
 });
 
-router.post('/:id([0-9]+)/images', multer.single('image'), imageValidationRules(), validate, async (req, res, next) => {
+router.post('/:id(\\d+)/images', multer.single('image'), plantSpeiesImageValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { file } = req;
@@ -184,7 +188,7 @@ router.post('/:id([0-9]+)/images', multer.single('image'), imageValidationRules(
   }
 });
 
-router.get('/:id([0-9]+)/subspecies', async (req, res, next) => {
+router.get('/:id(\\d+)/subspecies', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -198,7 +202,7 @@ router.get('/:id([0-9]+)/subspecies', async (req, res, next) => {
   }
 });
 
-router.get('/:id([0-9]+)/useful-parts', async (req, res, next) => {
+router.get('/:id(\\d+)/useful-parts', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -212,7 +216,7 @@ router.get('/:id([0-9]+)/useful-parts', async (req, res, next) => {
   }
 });
 
-router.delete('/:id([0-9]+)/useful-parts/:usefulPartId', async (req, res, next) => {
+router.delete('/:id(\\d+)/useful-parts/:usefulPartId', async (req, res, next) => {
   try {
     const {
       id,
@@ -235,7 +239,7 @@ router.delete('/:id([0-9]+)/useful-parts/:usefulPartId', async (req, res, next) 
   }
 });
 
-router.get('/:id([0-9]+)/bioactive-substances', async (req, res, next) => {
+router.get('/:id(\\d+)/bioactive-substances', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -269,7 +273,7 @@ router.get('/:id([0-9]+)/bioactive-substances', async (req, res, next) => {
 router.get('/search', async (req, res, next) => {
   try {
     const {
-      plantSpeciesCroatianName,
+      plantSpecies,
       bioactiveSubstances,
       botanicalFamilies,
       usefulParts,
@@ -282,7 +286,8 @@ router.get('/search', async (req, res, next) => {
       .leftJoinRelated('genus.botanicalFamily', { alias: 'bf' })
       .leftJoinRelated('plantParts.bioactiveSubstances', { alias: 'bs' })
       .leftJoinRelated('usefulParts', { alias: 'up' })
-      .where('ps.croatian_name', 'like', plantSpeciesCroatianName)
+      .where('ps.croatian_name', 'like', plantSpecies ? `${plantSpecies}%` : undefined)
+      .orWhere('ps.latin_name', 'like', plantSpecies ? `${plantSpecies}%` : undefined)
       .whereIn('bf.id', botanicalFamilies)
       .whereIn('bs.id', bioactiveSubstances)
       .whereIn('up.id', usefulParts)

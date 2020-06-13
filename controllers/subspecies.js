@@ -15,7 +15,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id([0-9]+)', async (req, res, next) => {
+router.get('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -49,7 +49,7 @@ router.post('/', subspeciesValidationRules(), validate, async (req, res, next) =
   }
 });
 
-router.patch('/:id([0-9]+)', subspeciesValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', subspeciesValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -74,7 +74,7 @@ router.patch('/:id([0-9]+)', subspeciesValidationRules(), validate, async (req, 
 });
 
 
-router.delete('/:id([0-9]+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 

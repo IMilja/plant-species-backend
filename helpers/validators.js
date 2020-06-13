@@ -1,4 +1,4 @@
-const { body, validationResult } = require('express-validator');
+const { body, param, validationResult } = require('express-validator');
 const responses = require('./responses');
 
 const botanicalFamilyValidationRules = () => [
@@ -41,14 +41,31 @@ const bioactiveSubstanceValidationRules = () => [
   body('measureUnitId').notEmpty().withMessage('Mjerna jedinica je obavezna'),
 ];
 
-const imageValidationRules = () => [
+const usefulPartImageValidationRules = () => [
   body('name').notEmpty().withMessage('Naziv je obavezan'),
   body('source').notEmpty().withMessage('Izvor je obavezan'),
+  body('uploadDate').notEmpty().withMessage('Datum prijenosa je obavezan'),
+  param('usefulPartId').isInt().withMessage('Uporabni dio je obavezan'),
+  param('plantSpeciesId').isInt().withMessage('Biljna vrsta je obavezna'),
+];
+
+const plantSpeiesImageValidationRules = () => [
+  body('name').notEmpty().withMessage('Naziv je obavezan'),
+  body('source').notEmpty().withMessage('Izvor je obavezan'),
+  body('uploadDate').notEmpty().withMessage('Datum prijenosa je obavezan'),
+  param('id').isInt().withMessage('Biljna vrsta je obavezna'),
 ];
 
 const plantPartBioactiveSubstanceRules = () => [
   body('bioactiveSubstanceId').notEmpty().withMessage('Bioaktivna tvar je obavezna'),
   body('content').notEmpty().withMessage('Sadržaj je obavezan'),
+  param('usefulPartId').isInt().withMessage('Uporabni dio je obavezan'),
+  param('plantSpeciesId').isInt().withMessage('Biljna vrsta je obavezna'),
+];
+
+const usefulPartAssigmentRules = () => [
+  body('usefulPartId').isInt().withMessage('Uporabni dio je obavezan'),
+  body('plantSpeciesId').isInt().withMessage('Biljna vrsta je obavezna'),
 ];
 
 const validate = (req, res, next) => {
@@ -70,7 +87,9 @@ module.exports = {
   measureUnitValidationRules,
   usefulPartValidationRules,
   bioactiveSubstanceValidationRules,
-  imageValidationRules,
+  usefulPartImageValidationRules,
+  plantSpeiesImageValidationRules,
+  usefulPartAssigmentRules,
   plantPartBioactiveSubstanceRules,
   validate,
 };

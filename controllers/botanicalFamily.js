@@ -15,7 +15,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id([0-9]+)', async (req, res, next) => {
+router.get('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -49,7 +49,7 @@ router.post('/', botanicalFamilyValidationRules(), validate, async (req, res, ne
   }
 });
 
-router.patch('/:id([0-9]+)', botanicalFamilyValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', botanicalFamilyValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -74,7 +74,7 @@ router.patch('/:id([0-9]+)', botanicalFamilyValidationRules(), validate, async (
 });
 
 
-router.delete('/:id([0-9]+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 

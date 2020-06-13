@@ -33,7 +33,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.delete('/:id([0-9]+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -61,7 +61,7 @@ router.delete('/:id([0-9]+)', async (req, res, next) => {
   }
 });
 
-router.patch('/:id([0-9]+)', async (req, res, next) => {
+router.patch('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 

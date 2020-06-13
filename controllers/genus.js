@@ -18,7 +18,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id([0-9]+)', async (req, res, next) => {
+router.get('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -55,7 +55,7 @@ router.post('/', genusValidationRules(), validate, async (req, res, next) => {
   }
 });
 
-router.patch('/:id([0-9]+)', genusValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', genusValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -83,7 +83,7 @@ router.patch('/:id([0-9]+)', genusValidationRules(), validate, async (req, res, 
 });
 
 
-router.delete('/:id([0-9]+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 

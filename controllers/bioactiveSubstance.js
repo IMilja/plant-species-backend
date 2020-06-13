@@ -17,7 +17,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id([0-9]+)', async (req, res, next) => {
+router.get('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -54,7 +54,7 @@ router.post('/', bioactiveSubstanceValidationRules(), validate, async (req, res,
   }
 });
 
-router.patch('/:id([0-9]+)', bioactiveSubstanceValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', bioactiveSubstanceValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -79,7 +79,7 @@ router.patch('/:id([0-9]+)', bioactiveSubstanceValidationRules(), validate, asyn
 });
 
 
-router.delete('/:id([0-9]+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 

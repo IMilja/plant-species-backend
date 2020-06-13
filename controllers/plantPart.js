@@ -4,15 +4,16 @@ const BioactiveSubstance = require('../models/BioactiveSubstance');
 const UsefulPart = require('../models/UsefulPart');
 const responses = require('../helpers/responses');
 const {
-  imageValidationRules,
+  usefulPartImageValidationRules,
   plantPartBioactiveSubstanceRules,
+  usefulPartAssigmentRules,
   validate,
 } = require('../helpers/validators');
 const { multer, uploadImageToStorage } = require('../lib/imageUploader');
 
 const router = Router();
 
-router.post('/', async (req, res, next) => {
+router.post('/', usefulPartAssigmentRules(), validate, async (req, res, next) => {
   try {
     const {
       usefulPartId,
@@ -35,7 +36,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.patch('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res, next) => {
+router.patch('/:plantSpeciesId/:usefulPartId', async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -56,7 +57,7 @@ router.patch('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res, 
   }
 });
 
-router.delete('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res, next) => {
+router.delete('/:plantSpeciesId/:usefulPartId', async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -76,7 +77,7 @@ router.delete('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)', async (req, res,
   }
 });
 
-router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', async (req, res, next) => {
+router.get('/:plantSpeciesId/:usefulPartId/images', async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -93,7 +94,7 @@ router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', async (req, 
   }
 });
 
-router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', multer.single('image'), imageValidationRules(), validate, async (req, res, next) => {
+router.post('/:plantSpeciesId/:usefulPartId/images', multer.single('image'), usefulPartImageValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -154,7 +155,7 @@ router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/images', multer.sing
   }
 });
 
-router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances', async (req, res, next) => {
+router.get('/:plantSpeciesId/:usefulPartId/bioactive-substances', async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -171,7 +172,7 @@ router.get('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances'
   }
 });
 
-router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances',
+router.post('/:plantSpeciesId/:usefulPartId/bioactive-substances',
   plantPartBioactiveSubstanceRules(),
   validate,
   async (req, res, next) => {
@@ -218,7 +219,7 @@ router.post('/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances
   });
 
 router.delete(
-  '/:plantSpeciesId([0-9]+)/:usefulPartId([0-9]+)/bioactive-substances/:bioactiveSubstanceId([0-9]+)',
+  '/:plantSpeciesId/:usefulPartId/bioactive-substances/:bioactiveSubstanceId',
   async (req, res, next) => {
     try {
       const {
