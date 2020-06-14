@@ -18,6 +18,7 @@ router.get('/', async (req, res, next) => {
       .skipUndefined()
       .where('pp.plant_species_id', plantSpeciesId)
       .select(
+        'img.id',
         'img.name',
         'img.description',
         'img.source',

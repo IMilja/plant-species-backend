@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const config = require('./config');
 const routes = require('./routes');
+const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 
@@ -10,14 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(routes);
 
-app.use((err, req, res, next) => {
-  res.status(500).json({
-    status: 'error',
-    statusCode: 500,
-    message: 'Internal server error',
-  });
-  next();
-});
+app.use(errorHandler);
 
 app.listen(config.port, () => {
   // eslint-disable-next-line no-console
