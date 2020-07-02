@@ -7,7 +7,8 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const data = await Genus.query()
+    const data = await Genus
+      .query()
       .withGraphFetched({
         botanicalFamily: true,
       });
@@ -22,7 +23,9 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const data = await Genus.query().findById(id);
+    const data = await Genus
+      .query()
+      .findById(id);
 
     if (!data) {
       return responses.notFoundResponse(res, 'resource not found');
@@ -41,10 +44,12 @@ router.post('/', genusValidationRules(), validate, async (req, res, next) => {
       botanicalFamilyId,
     } = req.body;
 
-    const data = await Genus.query().insertAndFetch({
-      name,
-      botanicalFamilyId,
-    })
+    const data = await Genus
+      .query()
+      .insertAndFetch({
+        name,
+        botanicalFamilyId,
+      })
       .withGraphFetched({
         botanicalFamily: true,
       });
@@ -64,10 +69,12 @@ router.patch('/:id(\\d+)', genusValidationRules(), validate, async (req, res, ne
       botanicalFamilyId,
     } = req.body;
 
-    const data = await Genus.query().patchAndFetchById(id, {
-      name,
-      botanicalFamilyId,
-    })
+    const data = await Genus
+      .query()
+      .patchAndFetchById(id, {
+        name,
+        botanicalFamilyId,
+      })
       .withGraphFetched({
         botanicalFamily: true,
       });
@@ -87,7 +94,9 @@ router.delete('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const rowsDeleted = await Genus.query().deleteById(id);
+    const rowsDeleted = await Genus
+      .query()
+      .deleteById(id);
 
     if (!rowsDeleted > 0) {
       return responses.notFoundResponse(res, 'resource not found');

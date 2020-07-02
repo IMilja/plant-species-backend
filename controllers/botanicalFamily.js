@@ -7,7 +7,8 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const data = await BotanicalFamily.query();
+    const data = await BotanicalFamily
+      .query();
 
     return responses.successResponse(res, data);
   } catch (error) {
@@ -19,7 +20,9 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const data = await BotanicalFamily.query().findById(id);
+    const data = await BotanicalFamily
+      .query()
+      .findById(id);
 
     if (!data) {
       return responses.notFoundResponse(res, 'resource not found');
@@ -38,10 +41,12 @@ router.post('/', botanicalFamilyValidationRules(), validate, async (req, res, ne
       latinName,
     } = req.body;
 
-    const data = await BotanicalFamily.query().insertAndFetch({
-      croatianName,
-      latinName,
-    });
+    const data = await BotanicalFamily
+      .query()
+      .insertAndFetch({
+        croatianName,
+        latinName,
+      });
 
     return responses.successCreated(res, data);
   } catch (error) {
@@ -58,10 +63,12 @@ router.patch('/:id(\\d+)', botanicalFamilyValidationRules(), validate, async (re
       latinName,
     } = req.body;
 
-    const data = await BotanicalFamily.query().patchAndFetchById(id, {
-      croatianName,
-      latinName,
-    });
+    const data = await BotanicalFamily
+      .query()
+      .patchAndFetchById(id, {
+        croatianName,
+        latinName,
+      });
 
     if (!data) {
       return responses.notFoundResponse(res, 'resource not found');
@@ -78,13 +85,30 @@ router.delete('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const rowsDeleted = await BotanicalFamily.query().deleteById(id);
+    const rowsDeleted = await BotanicalFamily
+      .query()
+      .deleteById(id);
 
     if (!rowsDeleted > 0) {
       return responses.notFoundResponse(res, 'resource not found');
     }
 
     return responses.successDeleted(res);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.get('/search', async (req, res, next) => {
+  try {
+    const { q } = req.query;
+
+    const data = await BotanicalFamily
+      .query()
+      .where('croatian_name', 'like', `${q}%`)
+      .orWhere('latin_name', 'like', `${q}%`);
+
+    return responses.successResponse(res, data);
   } catch (error) {
     return next(error);
   }

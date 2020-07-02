@@ -21,11 +21,13 @@ router.post('/', usefulPartAssigmentRules(), validate, async (req, res, next) =>
       description,
     } = req.body;
 
-    const data = await PlantPart.query().insertAndFetch({
-      usefulPartId,
-      plantSpeciesId,
-      description,
-    })
+    const data = await PlantPart
+      .query()
+      .insertAndFetch({
+        usefulPartId,
+        plantSpeciesId,
+        description,
+      })
       .withGraphFetched({
         usefulPart: true,
       });
@@ -47,9 +49,11 @@ router.patch('/:plantSpeciesId/:usefulPartId', async (req, res, next) => {
       description,
     } = req.body;
 
-    const data = await PlantPart.query().patchAndFetchById([plantSpeciesId, usefulPartId], {
-      description,
-    });
+    const data = await PlantPart
+      .query()
+      .patchAndFetchById([plantSpeciesId, usefulPartId], {
+        description,
+      });
 
     return responses.successResponse(res, data);
   } catch (error) {
@@ -65,7 +69,9 @@ router.delete('/:plantSpeciesId/:usefulPartId', async (req, res, next) => {
     } = req.params;
 
 
-    const rowsDeleted = await PlantPart.query().deleteById([plantSpeciesId, usefulPartId]);
+    const rowsDeleted = await PlantPart
+      .query()
+      .deleteById([plantSpeciesId, usefulPartId]);
 
     if (!rowsDeleted > 0) {
       return responses.notFoundResponse(res, 'resource not found');

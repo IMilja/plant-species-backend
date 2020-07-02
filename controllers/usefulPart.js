@@ -90,4 +90,19 @@ router.delete('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
+router.get('/search', async (req, res, next) => {
+  try {
+    const { q } = req.query;
+
+    const data = await UsefulPart
+      .query()
+      .where('croatian_name', 'like', `${q}%`)
+      .orWhere('latin_name', 'like', `${q}%`);
+
+    return responses.successResponse(res, data);
+  } catch (error) {
+    return next(error);
+  }
+});
+
 module.exports = router;

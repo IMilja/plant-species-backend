@@ -13,11 +13,13 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const data = await PlantSpecies.query().withGraphFetched({
-      genus: {
-        botanicalFamily: true,
-      },
-    });
+    const data = await PlantSpecies
+      .query()
+      .withGraphFetched({
+        genus: {
+          botanicalFamily: true,
+        },
+      });
 
     return responses.successResponse(res, data);
   } catch (error) {
@@ -273,29 +275,39 @@ router.get('/:id(\\d+)/bioactive-substances', async (req, res, next) => {
 router.get('/search', async (req, res, next) => {
   try {
     const {
-      plantSpecies,
-      bioactiveSubstances,
-      botanicalFamilies,
-      usefulParts,
+      q,
+      botanicalFamilies = '',
+      bioactiveSubstances = '',
+      usefulParts = '',
     } = req.query;
 
     const data = await PlantSpecies
       .query()
       .alias('ps')
       .skipUndefined()
-      .leftJoinRelated('genus.botanicalFamily', { alias: 'bf' })
-      .leftJoinRelated('plantParts.bioactiveSubstances', { alias: 'bs' })
-      .leftJoinRelated('usefulParts', { alias: 'up' })
-      .where('ps.croatian_name', 'like', plantSpecies ? `${plantSpecies}%` : undefined)
-      .orWhere('ps.latin_name', 'like', plantSpecies ? `${plantSpecies}%` : undefined)
-      .whereIn('bf.id', botanicalFamilies)
-      .whereIn('bs.id', bioactiveSubstances)
-      .whereIn('up.id', usefulParts)
-      .withGraphFetched({
-        genus: {
-          botanicalFamily: true,
+      .leftJoinRelated('genus.botanicalFamily', {
+        aliases: {
+          genus: 'g',
+          botanicalFamily: 'bf',
         },
       })
+      .leftJoinRelated('plantParts.bioactiveSubstances', {
+        aliases: {
+          plantParts: 'pp',
+          bioactiveSubstances: 'bs',
+        },
+      })
+      .leftJoinRelated('usefulParts', { alias: 'up' })
+      .where('ps.croatian_name', 'like', q ? `%${q}%` : undefined)
+      .orWhere('ps.latin_name', 'like', q ? `%${q}%` : undefined)
+      .orWhereIn('g:bf.id', botanicalFamilies.split(','))
+      .orWhereIn('pp:bs.id', bioactiveSubstances.split(','))
+      .orWhereIn('up.id', usefulParts.split(','))
+      .select(
+        'ps.*',
+        'g:bf.croatian_name AS bf_croatian_name',
+        'g:bf.latin_name AS bf_latin_name',
+      )
       .groupBy('ps.id');
 
     return responses.successResponse(res, data);

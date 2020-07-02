@@ -7,7 +7,8 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const data = await Subspecies.query();
+    const data = await Subspecies
+      .query();
 
     return responses.successResponse(res, data);
   } catch (error) {
@@ -19,7 +20,9 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const data = await Subspecies.query().findById(id);
+    const data = await Subspecies
+      .query()
+      .findById(id);
 
     if (!data) {
       return responses.notFoundResponse(res, 'resource not found');
@@ -38,10 +41,12 @@ router.post('/', subspeciesValidationRules(), validate, async (req, res, next) =
       plantSpeciesId,
     } = req.body;
 
-    const data = await Subspecies.query().insertAndFetch({
-      name,
-      plantSpeciesId,
-    });
+    const data = await Subspecies
+      .query()
+      .insertAndFetch({
+        name,
+        plantSpeciesId,
+      });
 
     return responses.successCreated(res, data);
   } catch (error) {
@@ -58,10 +63,12 @@ router.patch('/:id(\\d+)', subspeciesValidationRules(), validate, async (req, re
       plantSpeciesId,
     } = req.body;
 
-    const data = await Subspecies.query().patchAndFetchById(id, {
-      name,
-      plantSpeciesId,
-    });
+    const data = await Subspecies
+      .query()
+      .patchAndFetchById(id, {
+        name,
+        plantSpeciesId,
+      });
 
     if (!data) {
       return responses.notFoundResponse(res, 'resource not found');
@@ -78,7 +85,9 @@ router.delete('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const rowsDeleted = await Subspecies.query().deleteById(id);
+    const rowsDeleted = await Subspecies
+      .query()
+      .deleteById(id);
 
     if (!rowsDeleted > 0) {
       return responses.notFoundResponse(res, 'resource not found');

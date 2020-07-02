@@ -7,7 +7,8 @@ const router = Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    const data = await MeasureUnit.query();
+    const data = await MeasureUnit
+      .query();
 
     return responses.successResponse(res, data);
   } catch (error) {
@@ -19,7 +20,9 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const data = await MeasureUnit.query().findById(id);
+    const data = await MeasureUnit
+      .query()
+      .findById(id);
 
     if (!data) {
       return responses.notFoundResponse(res, 'resource not found');
@@ -37,9 +40,11 @@ router.post('/', measureUnitValidationRules(), validate, async (req, res, next) 
       name,
     } = req.body;
 
-    const data = await MeasureUnit.query().insertAndFetch({
-      name,
-    });
+    const data = await MeasureUnit
+      .query()
+      .insertAndFetch({
+        name,
+      });
 
     return responses.successCreated(res, data);
   } catch (error) {
@@ -55,9 +60,11 @@ router.patch('/:id(\\d+)', measureUnitValidationRules(), validate, async (req, r
       name,
     } = req.body;
 
-    const data = await MeasureUnit.query().patchAndFetchById(id, {
-      name,
-    });
+    const data = await MeasureUnit
+      .query()
+      .patchAndFetchById(id, {
+        name,
+      });
 
     if (!data) {
       return responses.notFoundResponse(res, 'resource not found');
@@ -74,7 +81,9 @@ router.delete('/:id(\\d+)', async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const rowsDeleted = await MeasureUnit.query().deleteById(id);
+    const rowsDeleted = await MeasureUnit
+      .query()
+      .deleteById(id);
 
     if (!rowsDeleted > 0) {
       return responses.notFoundResponse(res, 'resource not found');
