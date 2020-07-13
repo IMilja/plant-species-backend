@@ -2,6 +2,9 @@ const { Router } = require('express');
 const Genus = require('../models/Genus');
 const responses = require('../helpers/responses');
 const { genusValidationRules, validate } = require('../helpers/validators');
+const {
+  isAuthenticated,
+} = require('../lib/jwtTokens');
 
 const router = Router();
 
@@ -19,7 +22,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id(\\d+)', async (req, res, next) => {
+router.get('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -37,7 +40,7 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.post('/', genusValidationRules(), validate, async (req, res, next) => {
+router.post('/', isAuthenticated, genusValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       name,
@@ -60,7 +63,7 @@ router.post('/', genusValidationRules(), validate, async (req, res, next) => {
   }
 });
 
-router.patch('/:id(\\d+)', genusValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', isAuthenticated, genusValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -90,7 +93,7 @@ router.patch('/:id(\\d+)', genusValidationRules(), validate, async (req, res, ne
 });
 
 
-router.delete('/:id(\\d+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 

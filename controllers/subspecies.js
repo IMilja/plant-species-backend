@@ -2,6 +2,9 @@ const { Router } = require('express');
 const Subspecies = require('../models/Subspecies');
 const responses = require('../helpers/responses');
 const { subspeciesValidationRules, validate } = require('../helpers/validators');
+const {
+  isAuthenticated,
+} = require('../lib/jwtTokens');
 
 const router = Router();
 
@@ -34,7 +37,7 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.post('/', subspeciesValidationRules(), validate, async (req, res, next) => {
+router.post('/', isAuthenticated, subspeciesValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       name,
@@ -54,7 +57,7 @@ router.post('/', subspeciesValidationRules(), validate, async (req, res, next) =
   }
 });
 
-router.patch('/:id(\\d+)', subspeciesValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', isAuthenticated, subspeciesValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -81,7 +84,7 @@ router.patch('/:id(\\d+)', subspeciesValidationRules(), validate, async (req, re
 });
 
 
-router.delete('/:id(\\d+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 

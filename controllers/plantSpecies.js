@@ -8,6 +8,9 @@ const {
   validate,
 } = require('../helpers/validators');
 const { multer, uploadImageToStorage } = require('../lib/imageUploader');
+const {
+  isAuthenticated,
+} = require('../lib/jwtTokens');
 
 const router = Router();
 
@@ -48,7 +51,7 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.post('/', plantSpeciesValidationRules(), validate, async (req, res, next) => {
+router.post('/', isAuthenticated, plantSpeciesValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       croatianName,
@@ -78,7 +81,7 @@ router.post('/', plantSpeciesValidationRules(), validate, async (req, res, next)
   }
 });
 
-router.patch('/:id(\\d+)', plantSpeciesValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', isAuthenticated, plantSpeciesValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -115,7 +118,7 @@ router.patch('/:id(\\d+)', plantSpeciesValidationRules(), validate, async (req, 
 });
 
 
-router.delete('/:id(\\d+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -145,7 +148,7 @@ router.get('/:id(\\d+)/images', async (req, res, next) => {
   }
 });
 
-router.post('/:id(\\d+)/images', multer.single('image'), plantSpeiesImageValidationRules(), validate, async (req, res, next) => {
+router.post('/:id(\\d+)/images', isAuthenticated, multer.single('image'), plantSpeiesImageValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { file } = req;
@@ -218,7 +221,7 @@ router.get('/:id(\\d+)/useful-parts', async (req, res, next) => {
   }
 });
 
-router.delete('/:id(\\d+)/useful-parts/:usefulPartId', async (req, res, next) => {
+router.delete('/:id(\\d+)/useful-parts/:usefulPartId', isAuthenticated, async (req, res, next) => {
   try {
     const {
       id,

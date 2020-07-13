@@ -3,11 +3,13 @@
 exports.up = function (knex) {
   return knex.schema.createTable('user', (table) => {
     table.increments().primary();
-    table.string('user_name', 255).notNullable();
-    table.string('email', 255).notNullable();
+    table.string('email', 255).unique().notNullable();
     table.string('password', 255).notNullable();
-    table.string('name', 255);
-    table.string('surname', 255);
+    table.boolean('active').defaultTo(false);
+    table.string('activation_hash', 255);
+    table.string('password_reset_hash', 255);
+    table.string('refresh_token', 255);
+    table.timestamp('created_at').defaultTo(knex.fn.now());
     table.integer('role_id')
       .unsigned()
       .references('id')

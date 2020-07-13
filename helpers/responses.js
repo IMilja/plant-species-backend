@@ -4,6 +4,18 @@ exports.successResponse = (res, data) => res.status(200).json({
   data,
 });
 
+exports.successResponseWithMsg = (res, msg) => res.status(200).json({
+  status: 'ok',
+  statusCode: 200,
+  msg,
+});
+
+exports.acceptedResponse = (res, msg) => res.status(202).json({
+  status: 'accepted',
+  statusCode: 202,
+  msg,
+});
+
 exports.successCreated = (res, data) => res.status(201).json({
   status: 'created',
   statusCode: 201,

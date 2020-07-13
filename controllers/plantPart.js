@@ -10,10 +10,13 @@ const {
   validate,
 } = require('../helpers/validators');
 const { multer, uploadImageToStorage } = require('../lib/imageUploader');
+const {
+  isAuthenticated,
+} = require('../lib/jwtTokens');
 
 const router = Router();
 
-router.post('/', usefulPartAssigmentRules(), validate, async (req, res, next) => {
+router.post('/', isAuthenticated, usefulPartAssigmentRules(), validate, async (req, res, next) => {
   try {
     const {
       usefulPartId,
@@ -38,7 +41,7 @@ router.post('/', usefulPartAssigmentRules(), validate, async (req, res, next) =>
   }
 });
 
-router.patch('/:plantSpeciesId/:usefulPartId', async (req, res, next) => {
+router.patch('/:plantSpeciesId/:usefulPartId', isAuthenticated, async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -61,7 +64,7 @@ router.patch('/:plantSpeciesId/:usefulPartId', async (req, res, next) => {
   }
 });
 
-router.delete('/:plantSpeciesId/:usefulPartId', async (req, res, next) => {
+router.delete('/:plantSpeciesId/:usefulPartId', isAuthenticated, async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -100,7 +103,7 @@ router.get('/:plantSpeciesId/:usefulPartId/images', async (req, res, next) => {
   }
 });
 
-router.post('/:plantSpeciesId/:usefulPartId/images', multer.single('image'), usefulPartImageValidationRules(), validate, async (req, res, next) => {
+router.post('/:plantSpeciesId/:usefulPartId/images', isAuthenticated, multer.single('image'), usefulPartImageValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       plantSpeciesId,
@@ -179,6 +182,7 @@ router.get('/:plantSpeciesId/:usefulPartId/bioactive-substances', async (req, re
 });
 
 router.post('/:plantSpeciesId/:usefulPartId/bioactive-substances',
+  isAuthenticated,
   plantPartBioactiveSubstanceRules(),
   validate,
   async (req, res, next) => {
@@ -226,6 +230,7 @@ router.post('/:plantSpeciesId/:usefulPartId/bioactive-substances',
 
 router.delete(
   '/:plantSpeciesId/:usefulPartId/bioactive-substances/:bioactiveSubstanceId',
+  isAuthenticated,
   async (req, res, next) => {
     try {
       const {

@@ -2,6 +2,9 @@ const { Router } = require('express');
 const UsefulPart = require('../models/UsefulPart');
 const responses = require('../helpers/responses');
 const { usefulPartValidationRules, validate } = require('../helpers/validators');
+const {
+  isAuthenticated,
+} = require('../lib/jwtTokens');
 
 const router = Router();
 
@@ -31,7 +34,7 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.post('/', usefulPartValidationRules(), validate, async (req, res, next) => {
+router.post('/', isAuthenticated, usefulPartValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       croatianName,
@@ -49,7 +52,7 @@ router.post('/', usefulPartValidationRules(), validate, async (req, res, next) =
   }
 });
 
-router.patch('/:id(\\d+)', usefulPartValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', isAuthenticated, usefulPartValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -74,7 +77,7 @@ router.patch('/:id(\\d+)', usefulPartValidationRules(), validate, async (req, re
 });
 
 
-router.delete('/:id(\\d+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 

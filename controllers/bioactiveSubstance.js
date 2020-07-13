@@ -2,6 +2,9 @@ const { Router } = require('express');
 const BioactiveSubstance = require('../models/BioactiveSubstance');
 const responses = require('../helpers/responses');
 const { bioactiveSubstanceValidationRules, validate } = require('../helpers/validators');
+const {
+  isAuthenticated,
+} = require('../lib/jwtTokens');
 
 const router = Router();
 
@@ -19,7 +22,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id(\\d+)', async (req, res, next) => {
+router.get('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -35,7 +38,7 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.post('/', bioactiveSubstanceValidationRules(), validate, async (req, res, next) => {
+router.post('/', isAuthenticated, bioactiveSubstanceValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       name,
@@ -58,7 +61,7 @@ router.post('/', bioactiveSubstanceValidationRules(), validate, async (req, res,
   }
 });
 
-router.patch('/:id(\\d+)', bioactiveSubstanceValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', isAuthenticated, bioactiveSubstanceValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -85,7 +88,7 @@ router.patch('/:id(\\d+)', bioactiveSubstanceValidationRules(), validate, async 
 });
 
 
-router.delete('/:id(\\d+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -103,7 +106,7 @@ router.delete('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.get('/search', async (req, res, next) => {
+router.get('/search', isAuthenticated, async (req, res, next) => {
   try {
     const { q } = req.query;
 

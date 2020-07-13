@@ -2,6 +2,9 @@ const { Router } = require('express');
 const Image = require('../models/Image');
 const responses = require('../helpers/responses');
 const { deleteImageFromStorage } = require('../lib/imageUploader');
+const {
+  isAuthenticated,
+} = require('../lib/jwtTokens');
 
 const router = Router();
 
@@ -34,7 +37,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.delete('/:id(\\d+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -62,7 +65,7 @@ router.delete('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.patch('/:id(\\d+)', async (req, res, next) => {
+router.patch('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 

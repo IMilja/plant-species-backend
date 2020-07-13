@@ -8,13 +8,13 @@ module.exports = (err, req, res, next) => {
     res.status(409).send({
       status: 'conflict',
       statusCode: 409,
-      msg: 'Can\'t delete resource',
+      msg: 'Forigen key violation',
     });
   } else if (err instanceof ConstraintViolationError) {
     res.status(409).send({
       status: 'conflict',
       statusCode: 409,
-      msg: 'Can\'t delete resource',
+      msg: 'Constraint violation',
     });
   } else {
     res.status(500).send({

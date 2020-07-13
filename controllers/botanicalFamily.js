@@ -2,6 +2,9 @@ const { Router } = require('express');
 const BotanicalFamily = require('../models/BotanicalFamily');
 const responses = require('../helpers/responses');
 const { botanicalFamilyValidationRules, validate } = require('../helpers/validators');
+const {
+  isAuthenticated,
+} = require('../lib/jwtTokens');
 
 const router = Router();
 
@@ -16,7 +19,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id(\\d+)', async (req, res, next) => {
+router.get('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -34,7 +37,7 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.post('/', botanicalFamilyValidationRules(), validate, async (req, res, next) => {
+router.post('/', isAuthenticated, botanicalFamilyValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       croatianName,
@@ -54,7 +57,7 @@ router.post('/', botanicalFamilyValidationRules(), validate, async (req, res, ne
   }
 });
 
-router.patch('/:id(\\d+)', botanicalFamilyValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', isAuthenticated, botanicalFamilyValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -81,7 +84,7 @@ router.patch('/:id(\\d+)', botanicalFamilyValidationRules(), validate, async (re
 });
 
 
-router.delete('/:id(\\d+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 

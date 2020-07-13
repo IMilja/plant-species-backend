@@ -2,6 +2,9 @@ const { Router } = require('express');
 const MeasureUnit = require('../models/MeasureUnit');
 const responses = require('../helpers/responses');
 const { measureUnitValidationRules, validate } = require('../helpers/validators');
+const {
+  isAuthenticated,
+} = require('../lib/jwtTokens');
 
 const router = Router();
 
@@ -34,7 +37,7 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.post('/', measureUnitValidationRules(), validate, async (req, res, next) => {
+router.post('/', isAuthenticated, measureUnitValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       name,
@@ -52,7 +55,7 @@ router.post('/', measureUnitValidationRules(), validate, async (req, res, next) 
   }
 });
 
-router.patch('/:id(\\d+)', measureUnitValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', isAuthenticated, measureUnitValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -77,7 +80,7 @@ router.patch('/:id(\\d+)', measureUnitValidationRules(), validate, async (req, r
 });
 
 
-router.delete('/:id(\\d+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 

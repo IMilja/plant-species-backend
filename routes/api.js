@@ -10,6 +10,8 @@ const plantPartController = require('../controllers/plantPart');
 const measureUnitController = require('../controllers/measureUnit');
 const bioactiveSubstanceController = require('../controllers/bioactiveSubstance');
 const imageController = require('../controllers/image');
+const userController = require('../controllers/users');
+const roleController = require('../controllers/roles');
 
 const router = Router();
 
@@ -23,6 +25,8 @@ router.use('/plant-parts', plantPartController);
 router.use('/measure-units', measureUnitController);
 router.use('/bioactive-substances', bioactiveSubstanceController);
 router.use('/images', imageController);
+router.use('/users', userController);
+router.use('/roles', roleController);
 
 router.use('*', (req, res) => responses.notFoundResponse(res, 'route not found'));
 

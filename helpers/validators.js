@@ -68,6 +68,45 @@ const usefulPartAssigmentRules = () => [
   body('plantSpeciesId').isInt().withMessage('Biljna vrsta je obavezna'),
 ];
 
+const createAccountRules = () => [
+  body('email').isEmail().withMessage('Unesena E-Mail adresa je neispravna').trim(),
+  body('roleId').notEmpty().withMessage('Uloga je obavezna'),
+];
+
+const loginRules = () => [
+  body('email').isEmail().withMessage('Unesena E-Mail adresa je neispravna').trim(),
+  body('password').isLength({ min: 6 }).withMessage('Lozinka mora biti duža od 6 znakova'),
+];
+
+const forgotPasswordRules = () => [
+  body('email').notEmpty().withMessage('E-Mail je obavezan').trim(),
+  body('email').isEmail().withMessage('Unesena E-Mail adresa je neispravna'),
+];
+
+const resetPasswordRules = () => [
+  body('newPassword').isLength({ min: 6 }).withMessage('Lozinka mora biti duža od 6 znakova'),
+  body('repeatPassword').custom((value, { req }) => {
+    if (value !== req.body.newPassword) {
+      throw new Error('Lozinke nisu jednake');
+    } else {
+      return true;
+    }
+  }),
+];
+
+const activateAccountRules = () => [
+  body('email').isEmail().withMessage('Unesena E-Mail adresa je neispravna').trim(),
+  body('oldPassword').notEmpty().withMessage('Stara lozinka je obavezna'),
+  body('newPassword').isLength({ min: 6 }).withMessage('Lozinka mora biti duža od 6 znakova'),
+  body('repeatPassword').custom((value, { req }) => {
+    if (value !== req.body.newPassword) {
+      throw new Error('Lozinke nisu jednake');
+    } else {
+      return true;
+    }
+  }),
+];
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
 
@@ -91,5 +130,10 @@ module.exports = {
   plantSpeiesImageValidationRules,
   usefulPartAssigmentRules,
   plantPartBioactiveSubstanceRules,
+  createAccountRules,
+  loginRules,
+  forgotPasswordRules,
+  resetPasswordRules,
+  activateAccountRules,
   validate,
 };

@@ -2,6 +2,9 @@ const { Router } = require('express');
 const Systematist = require('../models/Systematist');
 const responses = require('../helpers/responses');
 const { systematistValidationRules, validate } = require('../helpers/validators');
+const {
+  isAuthenticated,
+} = require('../lib/jwtTokens');
 
 const router = Router();
 
@@ -31,7 +34,7 @@ router.get('/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.post('/', systematistValidationRules(), validate, async (req, res, next) => {
+router.post('/', isAuthenticated, systematistValidationRules(), validate, async (req, res, next) => {
   try {
     const {
       name,
@@ -47,7 +50,7 @@ router.post('/', systematistValidationRules(), validate, async (req, res, next) 
   }
 });
 
-router.patch('/:id(\\d+)', systematistValidationRules(), validate, async (req, res, next) => {
+router.patch('/:id(\\d+)', isAuthenticated, systematistValidationRules(), validate, async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -70,7 +73,7 @@ router.patch('/:id(\\d+)', systematistValidationRules(), validate, async (req, r
 });
 
 
-router.delete('/:id(\\d+)', async (req, res, next) => {
+router.delete('/:id(\\d+)', isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.params;
 
