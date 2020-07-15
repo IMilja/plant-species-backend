@@ -216,6 +216,10 @@ router.post('/forgot-password', forgotPasswordRules(), validate, async (req, res
       return responses.notFoundResponse(res, 'Korisnički račun ne postoji');
     }
 
+    if (user.passwordResetHash) {
+      return responses.badRequestResponse(res, 'Mail za obnovu lozinke je već poslan');
+    }
+
     await user.$query().patch({
       passwordResetHash,
     });
