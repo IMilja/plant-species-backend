@@ -37,14 +37,14 @@ router.post('/login', loginRules(), validate, async (req, res, next) => {
       return responses.unauthorizedResponse(res, 'Netočan e-mail ili lozinka');
     }
 
+    if (!user.active) {
+      return responses.unauthorizedResponse(res, 'Vaš korisnički račun nije aktiviran');
+    }
+
     const validPassword = await user.verifyPassword(password);
 
     if (!validPassword) {
       return responses.unauthorizedResponse(res, 'Netočan e-mail ili lozinka');
-    }
-
-    if (!user.active) {
-      return responses.unauthorizedResponse(res, 'Vaš korisnički račun nije aktiviran');
     }
 
     const accessToken = generateAccessToken({
@@ -111,6 +111,7 @@ router.post('/', isAuthenticated, isSuperAdmin, createAccountRules(), validate, 
     await mailer.sendMail(mailOptions);
 
     return responses.successCreated(res, {
+      id: data.id,
       email,
       role: data.role,
       roleId: data.role.id,
@@ -149,40 +150,26 @@ router.patch('/:id(\\d+)', isAuthenticated, isSuperAdmin, async (req, res, next)
   }
 });
 
-router.put('/activate-account', activateAccountRules(), validate, async (req, res, next) => {
+router.put('/activate-account/:activationHash', activateAccountRules(), validate, async (req, res, next) => {
   try {
     const {
-      email,
-      oldPassword,
       newPassword,
     } = req.body;
 
     const {
       activationHash,
-    } = req.query;
+    } = req.params;
 
     const user = await User.query().first().where({
-      email,
-    }).withGraphFetched({
-      role: true,
+      activation_hash: activationHash,
     });
 
     if (!user) {
-      return responses.badRequestResponse(res, 'Korisnički račun ne postoji');
+      return responses.badRequestResponse(res, 'Korisnički račun ne postoji ili je aktivacijski kod nevazeci');
     }
 
     if (user.active) {
       return responses.successResponseWithMsg(res, 'Korisnički račun je već aktivan');
-    }
-
-    const validPassword = await user.verifyPassword(oldPassword);
-
-    if (!validPassword) {
-      return responses.badRequestResponse(res, 'Korisnički račun ne postoji');
-    }
-
-    if (!(user.activationHash === activationHash)) {
-      return responses.badRequestResponse(res, 'Aktivacijski kod je nevazeci');
     }
 
     await user.$query().patch({
@@ -243,7 +230,7 @@ router.post('/forgot-password', forgotPasswordRules(), validate, async (req, res
 });
 
 
-router.put('/forgot-password', resetPasswordRules(), validate, async (req, res, next) => {
+router.put('/forgot-password/:passwordResetHash', resetPasswordRules(), validate, async (req, res, next) => {
   try {
     const {
       newPassword,
@@ -251,7 +238,7 @@ router.put('/forgot-password', resetPasswordRules(), validate, async (req, res, 
 
     const {
       passwordResetHash,
-    } = req.query;
+    } = req.params;
 
     const user = await User.query().first().where({
       password_reset_hash: passwordResetHash,

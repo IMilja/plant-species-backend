@@ -84,6 +84,7 @@ const forgotPasswordRules = () => [
 ];
 
 const resetPasswordRules = () => [
+  param('passwordResetHash').notEmpty().withMessage('Kod za promjenu lozinke je nevazeci'),
   body('newPassword').isLength({ min: 6 }).withMessage('Lozinka mora biti duža od 6 znakova'),
   body('repeatPassword').custom((value, { req }) => {
     if (value !== req.body.newPassword) {
@@ -95,8 +96,7 @@ const resetPasswordRules = () => [
 ];
 
 const activateAccountRules = () => [
-  body('email').isEmail().withMessage('Unesena E-Mail adresa je neispravna').trim(),
-  body('oldPassword').notEmpty().withMessage('Stara lozinka je obavezna'),
+  param('activationHash').notEmpty().withMessage('Aktivacijski kod je nevazeci'),
   body('newPassword').isLength({ min: 6 }).withMessage('Lozinka mora biti duža od 6 znakova'),
   body('repeatPassword').custom((value, { req }) => {
     if (value !== req.body.newPassword) {
