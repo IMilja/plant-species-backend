@@ -51,7 +51,7 @@ A brief summary on how to deploy the backend for the plant-species project
     - Set the value of the `.env` parameter to a random generated string [Example](https://randomkeygen.com/)
 - Run the command `npm install` to install all project dependencies
 - Run the command `npx knex migrate:latest` to create the database schema and tables
-- Run the command `npx knex seed:run` to populate tables with values values from the `seeds` folder
+- Run the command `npx knex seed:run` to populate tables with values from the `seeds` folder
 - Run the command `pm2 start app.js --name=plant-species-backend`
 - Go into the `nginx/apache` config and setup a `reverse proxy` to the application you ran with `pm2` manager (Example of the `config` file for nginx below)
   ```
